@@ -31,8 +31,14 @@
             display: none;
             padding: 20px;
         }
-        canvas {
-            margin-top: 20px;
+        .graph-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .graph-container canvas {
+            width: 48%;
+            margin-bottom: 20px;
         }
         .active {
             display: block;
@@ -50,39 +56,60 @@
 
     <div id="Andy" class="page">
         <h2>Profil Andy</h2>
-        <canvas id="graph_notes_andy"></canvas>
-        <canvas id="graph_artistes_andy"></canvas>
-        <canvas id="graph_compagnie_andy"></canvas>
-        <canvas id="graph_sexe_andy"></canvas>
+        <div class="graph-container">
+            <canvas id="graph_notes_andy"></canvas>
+            <canvas id="graph_artistes_andy"></canvas>
+            <canvas id="graph_compagnie_andy"></canvas>
+            <canvas id="graph_sexe_andy"></canvas>
+            <canvas id="graph_taille_andy"></canvas>
+            <canvas id="graph_generation_andy"></canvas>
+        </div>
     </div>
 
     <div id="Laurana" class="page">
         <h2>Profil Laurana</h2>
-        <canvas id="graph_notes_laurana"></canvas>
-        <canvas id="graph_artistes_laurana"></canvas>
-        <canvas id="graph_compagnie_laurana"></canvas>
-        <canvas id="graph_sexe_laurana"></canvas>
+        <div class="graph-container">
+            <canvas id="graph_notes_laurana"></canvas>
+            <canvas id="graph_artistes_laurana"></canvas>
+            <canvas id="graph_compagnie_laurana"></canvas>
+            <canvas id="graph_sexe_laurana"></canvas>
+            <canvas id="graph_taille_laurana"></canvas>
+            <canvas id="graph_generation_laurana"></canvas>
+        </div>
     </div>
 
     <div id="Anna" class="page">
         <h2>Profil Anna</h2>
-        <canvas id="graph_notes_anna"></canvas>
-        <canvas id="graph_artistes_anna"></canvas>
-        <canvas id="graph_compagnie_anna"></canvas>
-        <canvas id="graph_sexe_anna"></canvas>
+        <div class="graph-container">
+            <canvas id="graph_notes_anna"></canvas>
+            <canvas id="graph_artistes_anna"></canvas>
+            <canvas id="graph_compagnie_anna"></canvas>
+            <canvas id="graph_sexe_anna"></canvas>
+            <canvas id="graph_taille_anna"></canvas>
+            <canvas id="graph_generation_anna"></canvas>
+        </div>
     </div>
 
     <div id="Gwenola" class="page">
         <h2>Profil Gwenola</h2>
-        <canvas id="graph_notes_gwenola"></canvas>
-        <canvas id="graph_artistes_gwenola"></canvas>
-        <canvas id="graph_compagnie_gwenola"></canvas>
-        <canvas id="graph_sexe_gwenola"></canvas>
+        <div class="graph-container">
+            <canvas id="graph_notes_gwenola"></canvas>
+            <canvas id="graph_artistes_gwenola"></canvas>
+            <canvas id="graph_compagnie_gwenola"></canvas>
+            <canvas id="graph_sexe_gwenola"></canvas>
+            <canvas id="graph_taille_gwenola"></canvas>
+            <canvas id="graph_generation_gwenola"></canvas>
+        </div>
     </div>
 
     <div id="Moyenne" class="page">
         <h2>Moyenne des Notes</h2>
-        <canvas id="moyenne_graph"></canvas>
+        <div class="graph-container">
+            <canvas id="moyenne_graph"></canvas>
+            <canvas id="graph_artistes_moyenne"></canvas>
+            <canvas id="graph_sexe_moyenne"></canvas>
+            <canvas id="graph_compagnie_moyenne"></canvas>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
