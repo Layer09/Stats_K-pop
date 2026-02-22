@@ -91,17 +91,37 @@ d3.csv("data/table_xxl.csv").then(function(data) {
 
     // Créer les graphiques pour chaque profil
     function createGraphsForProfile(profile, data) {
-        let ctx1 = document.getElementById(`graph_notes_${profile}`).getContext('2d');
-        createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d[`Note_1_${profile}`]));
+        let ctx1 = document.getElementById(`graph_notes_${profile}`);
+        if (ctx1) {
+            ctx1 = ctx1.getContext('2d');
+            createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d[`Note_1_${profile}`]));
+        } else {
+            console.error(`Graphique pour graph_notes_${profile} introuvable.`);
+        }
 
-        let ctx2 = document.getElementById(`graph_artistes_${profile}`).getContext('2d');
-        createArtistesGraph(ctx2, data);
+        let ctx2 = document.getElementById(`graph_artistes_${profile}`);
+        if (ctx2) {
+            ctx2 = ctx2.getContext('2d');
+            createArtistesGraph(ctx2, data);
+        } else {
+            console.error(`Graphique pour graph_artistes_${profile} introuvable.`);
+        }
 
-        let ctx3 = document.getElementById(`graph_compagnie_${profile}`).getContext('2d');
-        createCompagnieGraph(ctx3, data);
+        let ctx3 = document.getElementById(`graph_compagnie_${profile}`);
+        if (ctx3) {
+            ctx3 = ctx3.getContext('2d');
+            createCompagnieGraph(ctx3, data);
+        } else {
+            console.error(`Graphique pour graph_compagnie_${profile} introuvable.`);
+        }
 
-        let ctx4 = document.getElementById(`graph_sexe_${profile}`).getContext('2d');
-        createSexeGraph(ctx4, data);
+        let ctx4 = document.getElementById(`graph_sexe_${profile}`);
+        if (ctx4) {
+            ctx4 = ctx4.getContext('2d');
+            createSexeGraph(ctx4, data);
+        } else {
+            console.error(`Graphique pour graph_sexe_${profile} introuvable.`);
+        }
     }
 
     // Créer les graphiques pour la Moyenne
