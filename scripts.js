@@ -7,6 +7,8 @@ function showPage(page) {
 
 // Charger les données CSV
 d3.csv("data/table_xxl.csv").then(function(data) {
+    console.log("Données CSV chargées avec succès", data); // Vérification du chargement des données
+
     // Fonction pour créer un graphique à barres
     function createBarChart(ctx, labels, data) {
         new Chart(ctx, {
@@ -117,37 +119,36 @@ d3.csv("data/table_xxl.csv").then(function(data) {
         if (ctx4) createSexeGraph(ctx4, data);
     }
 
-    // Créer tous les graphiques pour Anna
-    function createAnnaGraphs(data) {
-        let ctx1 = document.getElementById('graph_notes_anna')?.getContext('2d');
-        if (ctx1) createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d.Note_1_Anna));
-
-        let ctx2 = document.getElementById('graph_artistes_anna')?.getContext('2d');
-        if (ctx2) createArtistesGraph(ctx2, data);
-
-        let ctx3 = document.getElementById('graph_compagnie_anna')?.getContext('2d');
-        if (ctx3) createCompagnieGraph(ctx3, data);
-
-        let ctx4 = document.getElementById('graph_sexe_anna')?.getContext('2d');
-        if (ctx4) createSexeGraph(ctx4, data);
+    // Créer la Moyenne des Notes
+    function createMoyenneGraph(data) {
+        let moyenneNotes = data.map(d => (
+            (parseFloat(d.Note_1_Andy) + parseFloat(d.Note_2_Andy) + parseFloat(d.Note_1_Anna) + parseFloat(d.Note_1_Gwenola)) / 4
+        ));
+        let ctx = document.getElementById('moyenne_graph')?.getContext('2d');
+        if (ctx) {
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: data.map(d => d.Annee),
+                    datasets: [{
+                        label: 'Moyenne des Notes',
+                        data: moyenneNotes,
+                        fill: false,
+                        borderColor: 'rgb(75, 192, 192)',
+                        tension: 0.1
+                    }]
+                }
+            });
+        }
     }
 
-    // Créer tous les graphiques pour Gwenola
-    function createGwenolaGraphs(data) {
-        let ctx1 = document.getElementById('graph_notes_gwenola')?.getContext('2d');
-        if (ctx1) createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d.Note_1_Gwenola));
-
-        let ctx2 = document.getElementById('graph_artistes_gwenola')?.getContext('2d');
-        if (ctx2) createArtistesGraph(ctx2, data);
-
-        let ctx3 = document.getElementById('graph_compagnie_gwenola')?.getContext('2d');
-        if (ctx3) createCompagnieGraph(ctx3, data);
-
-        let ctx4 = document.getElementById('graph_sexe_gwenola')?.getContext('2d');
-        if (ctx4) createSexeGraph(ctx4, data);
-    }
+    // Créer tous les graphiques pour chaque profil
+    createAndyGraphs(data);
+    createLauranaGraphs(data);
+    createMoyenneGraph(data);
 
     // Afficher la page de Moyenne au départ
     showPage('Moyenne');
+}).catch(function(error) {
+    console.error("Erreur lors du chargement du fichier CSV", error);
 });
-
