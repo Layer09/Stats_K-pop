@@ -6,7 +6,7 @@ function showPage(page) {
 }
 
 // Charger les données CSV
-d3.csv("data/your_data.csv").then(function(data) {
+d3.csv("data/table_xxl.csv").then(function(data) {
     // Fonction pour créer un graphique à barres
     function createBarChart(ctx, labels, data) {
         new Chart(ctx, {
@@ -150,3 +150,4 @@ d3.csv("data/your_data.csv").then(function(data) {
     // Afficher la page de Moyenne au départ
     showPage('Moyenne');
 });
+
