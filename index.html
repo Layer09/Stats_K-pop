@@ -31,38 +31,58 @@
             display: none;
             padding: 20px;
         }
-        #notes, #moyenne, #other {
-            display: block;
-        }
         canvas {
             margin-top: 20px;
+        }
+        .active {
+            display: block;
         }
     </style>
 </head>
 <body>
     <div id="menu">
-        <button onclick="showPage('notes')">Notes</button>
-        <button onclick="showPage('moyenne')">Moyenne</button>
-        <button onclick="showPage('other')">Autres Statistiques</button>
+        <button onclick="showPage('Andy')">Andy</button>
+        <button onclick="showPage('Laurana')">Laurana</button>
+        <button onclick="showPage('Anna')">Anna</button>
+        <button onclick="showPage('Gwenola')">Gwenola</button>
+        <button onclick="showPage('Moyenne')">Moyenne</button>
     </div>
 
-    <div id="notes" class="page">
-        <h2>Notes par Personne</h2>
-        <canvas id="graph_notes_laurana"></canvas>
+    <div id="Andy" class="page">
+        <h2>Profil Andy</h2>
         <canvas id="graph_notes_andy"></canvas>
-        <canvas id="graph_notes_anna"></canvas>
-        <canvas id="graph_notes_melyssa"></canvas>
-        <canvas id="graph_notes_gwenola"></canvas>
+        <canvas id="graph_artistes_andy"></canvas>
+        <canvas id="graph_compagnie_andy"></canvas>
+        <canvas id="graph_sexe_andy"></canvas>
     </div>
 
-    <div id="moyenne" class="page">
+    <div id="Laurana" class="page">
+        <h2>Profil Laurana</h2>
+        <canvas id="graph_notes_laurana"></canvas>
+        <canvas id="graph_artistes_laurana"></canvas>
+        <canvas id="graph_compagnie_laurana"></canvas>
+        <canvas id="graph_sexe_laurana"></canvas>
+    </div>
+
+    <div id="Anna" class="page">
+        <h2>Profil Anna</h2>
+        <canvas id="graph_notes_anna"></canvas>
+        <canvas id="graph_artistes_anna"></canvas>
+        <canvas id="graph_compagnie_anna"></canvas>
+        <canvas id="graph_sexe_anna"></canvas>
+    </div>
+
+    <div id="Gwenola" class="page">
+        <h2>Profil Gwenola</h2>
+        <canvas id="graph_notes_gwenola"></canvas>
+        <canvas id="graph_artistes_gwenola"></canvas>
+        <canvas id="graph_compagnie_gwenola"></canvas>
+        <canvas id="graph_sexe_gwenola"></canvas>
+    </div>
+
+    <div id="Moyenne" class="page">
         <h2>Moyenne des Notes</h2>
         <canvas id="moyenne_graph"></canvas>
-    </div>
-
-    <div id="other" class="page">
-        <h2>Autres Statistiques</h2>
-        <canvas id="other_graphs"></canvas>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
