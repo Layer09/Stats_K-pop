@@ -1,7 +1,6 @@
-// Charger les données CSV
-d3.csv("data/table_xxl.csv").then(function(data) {
-    
-    // Fonction pour créer un graphique en barre
+d3.csv("data/your_data.csv").then(function(data) {
+
+    // Fonction pour créer un graphique à barres
     function createBarChart(ctx, labels, data) {
         new Chart(ctx, {
             type: 'bar',
@@ -18,28 +17,7 @@ d3.csv("data/table_xxl.csv").then(function(data) {
         });
     }
 
-    // Graphique des notes par Andy
-    function createNoteGraph(data) {
-        let notesAndy = data.map(d => d.Note_1_Andy);
-        let ctx = document.getElementById('graph_notes_andy').getContext('2d');
-        createBarChart(ctx, data.map(d => d.Artiste), notesAndy);
-    }
-
-    // Graphique des notes par Anna
-    function createNoteAnnaGraph(data) {
-        let notesAnna = data.map(d => d.Note_1_Anna);
-        let ctx = document.getElementById('graph_notes_anna').getContext('2d');
-        createBarChart(ctx, data.map(d => d.Artiste), notesAnna);
-    }
-
-    // Graphique des notes par Gwenola
-    function createNoteGwenolaGraph(data) {
-        let notesGwenola = data.map(d => d.Note_1_Gwenola);
-        let ctx = document.getElementById('graph_notes_gwenola').getContext('2d');
-        createBarChart(ctx, data.map(d => d.Artiste), notesGwenola);
-    }
-
-    // Moyenne des notes
+    // Fonction pour créer un graphique de moyenne
     function createMoyenneGraph(data) {
         let moyenneNotes = data.map(d => (
             (parseFloat(d.Note_1_Andy) + parseFloat(d.Note_2_Andy) + parseFloat(d.Note_1_Anna) + parseFloat(d.Note_1_Gwenola)) / 4
@@ -60,35 +38,139 @@ d3.csv("data/table_xxl.csv").then(function(data) {
         });
     }
 
-    // Autres statistiques
-    function createOtherGraph(data) {
-        let noteCount = data.map(d => d.Note_1_Andy).length;
-        let ctx = document.getElementById('other_graphs').getContext('2d');
+    // Fonction pour créer un graphique des artistes
+    function createArtistesGraph(ctx, data) {
+        let artistesCount = data.reduce((acc, d) => {
+            acc[d.Artiste] = (acc[d.Artiste] || 0) + 1;
+            return acc;
+        }, {});
+        let labels = Object.keys(artistesCount);
+        let values = Object.values(artistesCount);
+
         new Chart(ctx, {
             type: 'pie',
             data: {
-                labels: ['Notes Andy', 'Notes Anna', 'Notes Gwenola'],
+                labels: labels,
                 datasets: [{
-                    data: [noteCount, noteCount, noteCount], // Par exemple
-                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56'],
+                    data: values,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF914D'],
                 }]
             }
         });
     }
 
-    // Afficher les graphiques
-    createNoteGraph(data);
-    createNoteAnnaGraph(data);
-    createNoteGwenolaGraph(data);
-    createMoyenneGraph(data);
-    createOtherGraph(data);
+    // Fonction pour créer un graphique des compagnies
+    function createCompagnieGraph(ctx, data) {
+        let compagnieCount = data.reduce((acc, d) => {
+            acc[d.Compagnie] = (acc[d.Compagnie] || 0) + 1;
+            return acc;
+        }, {});
+        let labels = Object.keys(compagnieCount);
+        let values = Object.values(compagnieCount);
 
-    // Changer de page (pour les onglets)
-    function showPage(page) {
-        const pages = document.querySelectorAll('.page');
-        pages.forEach(p => p.style.display = 'none');
-        document.getElementById(page).style.display = 'block';
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF914D'],
+                }]
+            }
+        });
     }
 
-    showPage('notes');  // Par défaut, afficher la page des notes
+    // Fonction pour créer un graphique des sexes
+    function createSexeGraph(ctx, data) {
+        let sexeCount = data.reduce((acc, d) => {
+            acc[d.Sexe] = (acc[d.Sexe] || 0) + 1;
+            return acc;
+        }, {});
+        let labels = Object.keys(sexeCount);
+        let values = Object.values(sexeCount);
+
+        new Chart(ctx, {
+            type: 'pie',
+            data: {
+                labels: labels,
+                datasets: [{
+                    data: values,
+                    backgroundColor: ['#FF6384', '#36A2EB'],
+                }]
+            }
+        });
+    }
+
+    // Fonction pour afficher une page et masquer les autres
+    function showPage(page) {
+        const pages = document.querySelectorAll('.page');
+        pages.forEach(p => p.classList.remove('active'));
+        document.getElementById(page).classList.add('active');
+    }
+
+    // Créer tous les graphiques pour Andy
+    function createAndyGraphs(data) {
+        let ctx1 = document.getElementById('graph_notes_andy').getContext('2d');
+        createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d.Note_1_Andy));
+
+        let ctx2 = document.getElementById('graph_artistes_andy').getContext('2d');
+        createArtistesGraph(ctx2, data);
+
+        let ctx3 = document.getElementById('graph_compagnie_andy').getContext('2d');
+        createCompagnieGraph(ctx3, data);
+
+        let ctx4 = document.getElementById('graph_sexe_andy').getContext('2d');
+        createSexeGraph(ctx4, data);
+    }
+
+    // Créer tous les graphiques pour Laurana
+    function createLauranaGraphs(data) {
+        let ctx1 = document.getElementById('graph_notes_laurana').getContext('2d');
+        createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d.Note_1_Laurana));
+
+        let ctx2 = document.getElementById('graph_artistes_laurana').getContext('2d');
+        createArtistesGraph(ctx2, data);
+
+        let ctx3 = document.getElementById('graph_compagnie_laurana').getContext('2d');
+        createCompagnieGraph(ctx3, data);
+
+        let ctx4 = document.getElementById('graph_sexe_laurana').getContext('2d');
+        createSexeGraph(ctx4, data);
+    }
+
+    // Créer tous les graphiques pour Anna
+    function createAnnaGraphs(data) {
+        let ctx1 = document.getElementById('graph_notes_anna').getContext('2d');
+        createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d.Note_1_Anna));
+
+        let ctx2 = document.getElementById('graph_artistes_anna').getContext('2d');
+        createArtistesGraph(ctx2, data);
+
+        let ctx3 = document.getElementById('graph_compagnie_anna').getContext('2d');
+        createCompagnieGraph(ctx3, data);
+
+        let ctx4 = document.getElementById('graph_sexe_anna').getContext('2d');
+        createSexeGraph(ctx4, data);
+    }
+
+    // Créer tous les graphiques pour Gwenola
+    function createGwenolaGraphs(data) {
+        let ctx1 = document.getElementById('graph_notes_gwenola').getContext('2d');
+        createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d.Note_1_Gwenola));
+
+        let ctx2 = document.getElementById('graph_artistes_gwenola').getContext('2d');
+        createArtistesGraph(ctx2, data);
+
+        let ctx3 = document.getElementById('graph_compagnie_gwenola').getContext('2d');
+        createCompagnieGraph(ctx3, data);
+
+        let ctx4 = document.getElementById('graph_sexe_gwenola').getContext('2d');
+        createSexeGraph(ctx4, data);
+    }
+
+    // Créer la Moyenne des Notes
+    createMoyenneGraph(data);
+
+    // Afficher la page de Moyenne au départ
+    showPage('Moyenne');
 });
