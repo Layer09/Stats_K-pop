@@ -1014,83 +1014,7 @@ window.onload = function () {
                 },
                 options: defaultOptions
             });
-        };
-
-        // ===============================
-        // GRAPHIQUES PAR PROFIL
-        // ===============================
-        function createGraphsForProfile(profile, data) {
-
-            // Notes
-            let ctxNotes = document.getElementById(`graph_notes_${profile}`);
-            if (ctxNotes) {
-                createBarChart(
-                    ctxNotes.getContext('2d'),
-                    data.map(d => d.Artiste),
-                    data.map(d => parseFloat(d[`Note_1_${profile}`]) || 0)
-                );
-            }
-
-            // Artistes
-            let ctxArtistes = document.getElementById(`graph_artistes_${profile}`);
-            if (ctxArtistes) {
-                createArtistesGraph(ctxArtistes.getContext('2d'), data);
-            }
-
-            // Compagnie
-            let ctxCompagnie = document.getElementById(`graph_compagnie_${profile}`);
-            if (ctxCompagnie) {
-                createCompagnieGraph(ctxCompagnie.getContext('2d'), data);
-            }
-
-            // Sexe
-            let ctxSexe = document.getElementById(`graph_sexe_${profile}`);
-            if (ctxSexe) {
-                createSexeGraph(ctxSexe.getContext('2d'), data);
-            }
         }
-
-
-        // ===============================
-        // GRAPHIQUES MOYENNE
-        // ===============================
-        function createMoyenneGraphs(data) {
-
-            let moyenneNotes = data.map(d => (
-                (
-                    (parseFloat(d.Note_2_Laurana) || 0) +
-                    (parseFloat(d.Note_2_Andy) || 0) +
-                    (parseFloat(d.Note_1_Anna) || 0) +
-                    (parseFloat(d.Note_2_Melyssa) || 0) +
-                    (parseFloat(d.Note_1_Gwenola) || 0)
-                ) / 5
-            ));
-
-            let ctxMoyenne = document.getElementById('moyenne_graph');
-            if (ctxMoyenne) {
-                createBarChart(
-                    ctxMoyenne.getContext('2d'),
-                    data.map(d => d.Annee),
-                    moyenneNotes
-                );
-            }
-
-            let ctxArtistesMoy = document.getElementById('graph_artistes_moyenne');
-            if (ctxArtistesMoy) {
-                createArtistesGraph(ctxArtistesMoy.getContext('2d'), data);
-            }
-
-            let ctxSexeMoy = document.getElementById('graph_sexe_moyenne');
-            if (ctxSexeMoy) {
-                createSexeGraph(ctxSexeMoy.getContext('2d'), data);
-            }
-
-            let ctxCompagnieMoy = document.getElementById('graph_compagnie_moyenne');
-            if (ctxCompagnieMoy) {
-                createCompagnieGraph(ctxCompagnieMoy.getContext('2d'), data);
-            }
-        }
-
 
         // ===============================
         // LANCEMENT
@@ -1141,6 +1065,7 @@ window.onload = function () {
     });
 
 };
+
 
 
 
