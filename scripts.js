@@ -332,8 +332,6 @@ function fillBottomArtistes(tableId,data,profil){
     });
 }
 
-
-
 // Table: Top musiques
 function fillTopMusiques(tableId,data,profil){
 
@@ -341,7 +339,9 @@ function fillTopMusiques(tableId,data,profil){
     tbody.innerHTML="";
 
     const label=document.getElementById(`top_label_note_${profil}`);
-    label.innerText= profil==="Moyenne" ? "Note moyenne" : "Note";
+    if(label){
+        label.innerText = profil==="Moyenne" ? "Note moyenne" : "Note";
+    }
 
     let musiques=[];
 
@@ -394,7 +394,9 @@ function fillBottomMusiques(tableId,data,profil){
     tbody.innerHTML="";
 
     const label=document.getElementById(`bottom_label_note_${profil}`);
-    label.innerText= profil==="Moyenne" ? "Note moyenne" : "Note";
+    if(label){
+        label.innerText = profil==="Moyenne" ? "Note moyenne" : "Note";
+    }
 
     let musiques=[];
 
@@ -491,6 +493,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
