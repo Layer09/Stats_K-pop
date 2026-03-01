@@ -47,27 +47,39 @@ function getPastelSexeColor(label) {
 }
 
 function getNotes(d, profil){
+
+    function getValidNumber(value){
+        if(value === undefined || value === null) return null;
+        const cleaned = String(value).trim().replace(",", ".");
+        if(cleaned === "") return null;
+        const num = Number(cleaned);
+        return isNaN(num) ? null : num;
+    }
+
     let notes=[];
     const jures=["Laurana","Andy","Anna","Gwenola","Melyssa"];
 
     if(profil==="Moyenne"){
-        jures.forEach(j=>{
-            const n2=parseFloat(d[`Note_2_${j}`]);
-            const n1=parseFloat(d[`Note_1_${j}`]);
 
-            if(!isNaN(n2)){
-                notes.push(n2);   // priorité à Note_2
-            } else if(!isNaN(n1)){
+        jures.forEach(j=>{
+            const n2 = getValidNumber(d[`Note_2_${j}`]);
+            const n1 = getValidNumber(d[`Note_1_${j}`]);
+
+            if(n2 !== null){
+                notes.push(n2);   // priorité note 2
+            } else if(n1 !== null){
                 notes.push(n1);
             }
         });
-    } else {
-        const n2=parseFloat(d[`Note_2_${profil}`]);
-        const n1=parseFloat(d[`Note_1_${profil}`]);
 
-        if(!isNaN(n2)){
+    } else {
+
+        const n2 = getValidNumber(d[`Note_2_${profil}`]);
+        const n1 = getValidNumber(d[`Note_1_${profil}`]);
+
+        if(n2 !== null){
             notes.push(n2);
-        } else if(!isNaN(n1)){
+        } else if(n1 !== null){
             notes.push(n1);
         }
     }
@@ -479,6 +491,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
