@@ -1095,14 +1095,44 @@ window.onload = function () {
         // ===============================
         // LANCEMENT
         // ===============================
-        createGraphsForProfile('Laurana', data);
-        createGraphsForProfile('Andy', data);
-        createGraphsForProfile('Anna', data);
-        createGraphsForProfile('Melyssa', data);
-        createGraphsForProfile('Gwenola', data);
-
-        createMoyenneGraphs(data);
-
+        d3.csv("data/table_xxl.csv").then(function(data) {
+        
+            // ===================== NIVEAU 1 =====================
+            createGraphsForProfile('Laurana', data);
+            createGraphsForProfile('Andy', data);
+            createGraphsForProfile('Anna', data);
+            createGraphsForProfile('Melyssa', data);
+            createGraphsForProfile('Gwenola', data);
+            createMoyenneGraphs(data);
+        
+            // ===================== NIVEAU 2 =====================
+            graphMoyenneParGeneration(document.getElementById('graph_moyenne_generation'), data);
+            graphMoyenneParSexe(document.getElementById('graph_moyenne_sexe'), data);
+            graphMoyenneParType(document.getElementById('graph_moyenne_type'), data);
+            graphEvolutionParAnnee(document.getElementById('graph_evolution_annee'), data);
+            graphEvolutionParGeneration(document.getElementById('graph_evolution_generation'), data);
+            graphEvolutionParSexe(document.getElementById('graph_evolution_sexe'), data);
+            graphEvolutionParJure(document.getElementById('graph_evolution_jure'), data);
+        
+            // ===================== NIVEAU 3 =====================
+            graphGenerationSexe(document.getElementById('graph_generation_sexe'), data);
+            graphCompagnieGeneration(document.getElementById('graph_compagnie_generation'), data);
+            graphArtisteJure(document.getElementById('graph_artiste_jure'), data);
+            graphTailleSexe(document.getElementById('graph_taille_sexe'), data);
+            graphTop10Titres(document.getElementById('graph_top10'), data);
+            graphBottom10Titres(document.getElementById('graph_bottom10'), data);
+            graphDistributionNotes(document.getElementById('graph_distribution'), data);
+        
+            // ===================== NIVEAU 4 =====================
+            graphMoyenneParArtisteDropdown(document.getElementById('graph_artiste_dropdown'), data, "Tous");
+            graphMoyenneSexeMulti(document.getElementById('graph_moyenne_sexe_multi'), data);
+            graphMoyenneParEpisode(document.getElementById('graph_moyenne_episode'), data);
+            graphGenerationDominante(document.getElementById('graph_generation_dominante'), data);
+            graphMoyenneCumulative(document.getElementById('graph_moyenne_cumulative'), data);
+            graphMoyenneParTypeVideo(document.getElementById('graph_moyenne_type_video'), data);
+            graphMoyenneParGroupe(document.getElementById('graph_moyenne_groupe'), data);
+        
+        });
         // Page affichée au démarrage
         showPage('Moyenne');
 
@@ -1111,6 +1141,7 @@ window.onload = function () {
     });
 
 };
+
 
 
 
