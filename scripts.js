@@ -454,6 +454,7 @@ function createArtistAndMusicGraphs(profil, data) {
     if(checkboxTop){
         checkboxTop.onchange = ()=> createArtistAndMusicGraphs(profil, data);
     }
+}
 
 // ===============================
 // Chargement du CSV et lancement
@@ -468,6 +469,3 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
-
-
-
