@@ -223,8 +223,13 @@ function graphTopArtistes(ctx, data, profil, minOccur=false) {
     });
 }
 
-// Table : 10 artistes moins appréciés
-function graphBottomArtistes(ctx, data, profil, minOccur=false) {
+// ===============================
+// Remplir tableau top artistes
+// ===============================
+function fillTopArtistes(tableId, data, profil, minOccur=false){
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = "";
+
     const artistStats = {};
 
     data.forEach(d => {
@@ -232,69 +237,116 @@ function graphBottomArtistes(ctx, data, profil, minOccur=false) {
         const sexe = cleanValue(d.Sexe);
         let notes = [];
 
-        if (profil === "Moyenne") {
-            ["Laurana","Andy","Anna","Gwenola","Melyssa"].forEach(jure => {
+        if(profil === "Moyenne"){
+            ["Laurana","Andy","Anna","Gwenola","Melyssa"].forEach(jure=>{
                 const n1 = parseFloat(d[`Note_1_${jure}`]);
                 const n2 = parseFloat(d[`Note_2_${jure}`]);
-                if (!isNaN(n1)) notes.push(n1);
-                if (!isNaN(n2)) notes.push(n2);
+                if(!isNaN(n1)) notes.push(n1);
+                if(!isNaN(n2)) notes.push(n2);
             });
         } else {
             const n1 = parseFloat(d[`Note_1_${profil}`]);
             const n2 = parseFloat(d[`Note_2_${profil}`]);
-            if (!isNaN(n1)) notes.push(n1);
-            if (!isNaN(n2)) notes.push(n2);
+            if(!isNaN(n1)) notes.push(n1);
+            if(!isNaN(n2)) notes.push(n2);
         }
 
-        if (notes.length > 0) {
-            if (!artistStats[artiste]) artistStats[artiste] = { sum: 0, count: 0, sexe: sexe };
+        if(notes.length > 0){
+            if(!artistStats[artiste]) artistStats[artiste] = {sum:0, count:0, sexe:sexe};
             artistStats[artiste].sum += notes.reduce((a,b)=>a+b,0)/notes.length;
             artistStats[artiste].count += 1;
         }
     });
 
+    // Filtrer si checkbox activée
     let filtered = Object.entries(artistStats)
-        .filter(([a, stats]) => !minOccur || stats.count >= 5);
+        .filter(([a,stats]) => !minOccur || stats.count >= 5);
 
-    // Trier par moyenne croissante
-    filtered.sort((a,b) => a[1].sum/a[1].count - b[1].sum/b[1].count);
+    // Trier par moyenne décroissante et prendre top 10
+    filtered.sort((a,b) => b[1].sum/b[1].count - a[1].sum/a[1].count);
+    const top = filtered.slice(0,10);
 
-    const bottom = filtered.slice(0,10);
-
-    const labels = bottom.map(([a, stats], idx) => `${idx+1}. ${a}`);
-    const dataValues = bottom.map(([a, stats]) => +(stats.sum/stats.count).toFixed(2));
-    const backgroundColors = bottom.map(([a, stats]) => getPastelSexeColor(stats.sexe));
-
-    if(chartInstances[`bottomArt_${profil}`]) chartInstances[`bottomArt_${profil}`].destroy();
-
-    chartInstances[`bottomArt_${profil}`] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: labels,
-            datasets: [{
-                label: "Moyenne",
-                data: dataValues,
-                backgroundColor: backgroundColors
-            }]
-        },
-        options: {
-            indexAxis: 'y',
-            responsive: true,
-            animation: { duration: 800, easing: 'easeOutCubic', from: 0 },
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { x: { beginAtZero: true, max: 10 } }
-        }
+    top.forEach(([artiste, stats], idx) => {
+        const tr = document.createElement("tr");
+        tr.style.backgroundColor = getPastelSexeColor(stats.sexe);
+        tr.innerHTML = `
+            <td>${idx+1}</td>
+            <td>${artiste}</td>
+            <td>${(stats.sum/stats.count).toFixed(2)}</td>
+            <td>${stats.count}</td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 
-// Table: Meilleures musiques
-function graphTopMusiques(ctx, data, profil) {
-    let musiques = [];
+// ===============================
+// Remplir tableau bottom artistes
+// ===============================
+function fillBottomArtistes(tableId, data, profil, minOccur=false){
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = "";
+
+    const artistStats = {};
 
     data.forEach(d => {
-        const notes = [];
-        if(profil==="Moyenne") {
+        const artiste = cleanValue(d.Artiste);
+        const sexe = cleanValue(d.Sexe);
+        let notes = [];
+
+        if(profil === "Moyenne"){
+            ["Laurana","Andy","Anna","Gwenola","Melyssa"].forEach(jure=>{
+                const n1 = parseFloat(d[`Note_1_${jure}`]);
+                const n2 = parseFloat(d[`Note_2_${jure}`]);
+                if(!isNaN(n1)) notes.push(n1);
+                if(!isNaN(n2)) notes.push(n2);
+            });
+        } else {
+            const n1 = parseFloat(d[`Note_1_${profil}`]);
+            const n2 = parseFloat(d[`Note_2_${profil}`]);
+            if(!isNaN(n1)) notes.push(n1);
+            if(!isNaN(n2)) notes.push(n2);
+        }
+
+        if(notes.length > 0){
+            if(!artistStats[artiste]) artistStats[artiste] = {sum:0, count:0, sexe:sexe};
+            artistStats[artiste].sum += notes.reduce((a,b)=>a+b,0)/notes.length;
+            artistStats[artiste].count += 1;
+        }
+    });
+
+    // Filtrer si checkbox activée
+    let filtered = Object.entries(artistStats)
+        .filter(([a,stats]) => !minOccur || stats.count >= 5);
+
+    // Trier par moyenne croissante et prendre bottom 10
+    filtered.sort((a,b) => a[1].sum/a[1].count - b[1].sum/b[1].count);
+    const bottom = filtered.slice(0,10);
+
+    bottom.forEach(([artiste, stats], idx) => {
+        const tr = document.createElement("tr");
+        tr.style.backgroundColor = getPastelSexeColor(stats.sexe);
+        tr.innerHTML = `
+            <td>${idx+1}</td>
+            <td>${artiste}</td>
+            <td>${(stats.sum/stats.count).toFixed(2)}</td>
+            <td>${stats.count}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// ===============================
+// Remplir tableau meilleures musiques
+// ===============================
+function fillTopMusiques(tableId, data, profil){
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = "";
+
+    let musiques = [];
+
+    data.forEach(d=>{
+        const notes=[];
+        if(profil==="Moyenne"){
             ["Laurana","Andy","Anna","Gwenola","Melyssa"].forEach(jure=>{
                 const n1=parseFloat(d[`Note_1_${jure}`]);
                 const n2=parseFloat(d[`Note_2_${jure}`]);
@@ -309,12 +361,11 @@ function graphTopMusiques(ctx, data, profil) {
         }
 
         if(notes.length>0){
-            const moyenne = notes.reduce((a,b)=>a+b,0)/notes.length;
             musiques.push({
                 titre: cleanValue(d.Titre),
                 artiste: cleanValue(d.Artiste),
                 annee: cleanValue(d.Annee),
-                moyenne: moyenne,
+                moyenne: notes.reduce((a,b)=>a+b,0)/notes.length,
                 sexe: cleanValue(d.Sexe)
             });
         }
@@ -325,47 +376,41 @@ function graphTopMusiques(ctx, data, profil) {
 
     let top = [];
     if(profil==="Moyenne"){
-        // Top 10 ou plus si égalité
         let i=0;
         while(i<musiques.length && (i<10 || musiques[i].moyenne===musiques[9].moyenne)){
             top.push(musiques[i]);
             i++;
         }
     } else {
-        // Profils individuels : toutes les musiques à 10/10
         top = musiques.filter(m=>m.moyenne===10);
     }
 
-    const labels = top.map((m,idx)=>`${idx+1}. ${m.titre} (${m.artiste})`);
-    const dataValues = top.map(m=>m.moyenne);
-    const backgroundColors = top.map(m=>getPastelSexeColor(m.sexe));
-
-    if(chartInstances[`topMus_${profil}`]) chartInstances[`topMus_${profil}`].destroy();
-
-    chartInstances[`topMus_${profil}`] = new Chart(ctx,{
-        type:'bar',
-        data:{
-            labels:labels,
-            datasets:[{label:'Note moyenne',data:dataValues,backgroundColor:backgroundColors}]
-        },
-        options:{
-            indexAxis:'y',
-            responsive:true,
-            animation:{duration:800,easing:'easeOutCubic',from:0},
-            maintainAspectRatio:false,
-            plugins:{legend:{display:false}},
-            scales:{x:{beginAtZero:true,max:10}}
-        }
+    top.forEach((m, idx)=>{
+        const tr=document.createElement("tr");
+        tr.style.backgroundColor = getPastelSexeColor(m.sexe);
+        tr.innerHTML = `
+            <td>${idx+1}</td>
+            <td>${m.titre}</td>
+            <td>${m.artiste}</td>
+            <td>${m.annee}</td>
+            <td>${m.moyenne.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 
-// Table: Pire musiques
-function graphBottomMusiques(ctx, data, profil) {
+// ===============================
+// Remplir tableau moins bonnes musiques
+// ===============================
+function fillBottomMusiques(tableId, data, profil){
+    const tbody = document.querySelector(`#${tableId} tbody`);
+    tbody.innerHTML = "";
+
     let musiques = [];
 
-    data.forEach(d => {
-        const notes = [];
-        if(profil==="Moyenne") {
+    data.forEach(d=>{
+        const notes=[];
+        if(profil==="Moyenne"){
             ["Laurana","Andy","Anna","Gwenola","Melyssa"].forEach(jure=>{
                 const n1=parseFloat(d[`Note_1_${jure}`]);
                 const n2=parseFloat(d[`Note_2_${jure}`]);
@@ -380,47 +425,36 @@ function graphBottomMusiques(ctx, data, profil) {
         }
 
         if(notes.length>0){
-            const moyenne = notes.reduce((a,b)=>a+b,0)/notes.length;
             musiques.push({
                 titre: cleanValue(d.Titre),
                 artiste: cleanValue(d.Artiste),
                 annee: cleanValue(d.Annee),
-                moyenne: moyenne,
+                moyenne: notes.reduce((a,b)=>a+b,0)/notes.length,
                 sexe: cleanValue(d.Sexe)
             });
         }
     });
 
-    // Trier croissant
     musiques.sort((a,b)=>a.moyenne - b.moyenne);
 
-    let bottom = [];
+    let bottom=[];
     let i=0;
     while(i<musiques.length && (i<10 || musiques[i].moyenne===musiques[9].moyenne)){
         bottom.push(musiques[i]);
         i++;
     }
 
-    const labels = bottom.map((m,idx)=>`${idx+1}. ${m.titre} (${m.artiste})`);
-    const dataValues = bottom.map(m=>m.moyenne);
-    const backgroundColors = bottom.map(m=>getPastelSexeColor(m.sexe));
-
-    if(chartInstances[`bottomMus_${profil}`]) chartInstances[`bottomMus_${profil}`].destroy();
-
-    chartInstances[`bottomMus_${profil}`] = new Chart(ctx,{
-        type:'bar',
-        data:{
-            labels:labels,
-            datasets:[{label:'Note moyenne',data:dataValues,backgroundColor:backgroundColors}]
-        },
-        options:{
-            indexAxis:'y',
-            responsive:true,
-            animation:{duration:800,easing:'easeOutCubic',from:0},
-            maintainAspectRatio:false,
-            plugins:{legend:{display:false}},
-            scales:{x:{beginAtZero:true,max:10}}
-        }
+    bottom.forEach((m, idx)=>{
+        const tr=document.createElement("tr");
+        tr.style.backgroundColor = getPastelSexeColor(m.sexe);
+        tr.innerHTML = `
+            <td>${idx+1}</td>
+            <td>${m.titre}</td>
+            <td>${m.artiste}</td>
+            <td>${m.annee}</td>
+            <td>${m.moyenne.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
     });
 }
 
@@ -437,23 +471,21 @@ function createGraphsForProfile(profil, data) {
     // ajouter la suite de X ici pour les autres graphes...
 }
 
-function createArtistAndMusicGraphs(profil, data) {
-    const ctxTopArt = document.getElementById(`graph_top_artistes_${profil}`);
-    const ctxBottomArt = document.getElementById(`graph_bottom_artistes_${profil}`);
-    const ctxTopMus = document.getElementById(`graph_top_musiques_${profil}`);
-    const ctxBottomMus = document.getElementById(`graph_bottom_musiques_${profil}`);
+function createTablesForProfile(profil, data){
+    fillTopArtistes(`table_top_artistes_${profil}`, data, profil, document.getElementById(`filter_artistes_top_${profil}`)?.checked);
+    fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, document.getElementById(`filter_artistes_bottom_${profil}`)?.checked);
+    fillTopMusiques(`table_top_chansons_${profil}`, data, profil);
+    fillBottomMusiques(`table_bottom_chansons_${profil}`, data, profil);
 
-    const checkboxTop = document.getElementById(`checkbox_min_occur_${profil}`);
-    const minOccur = checkboxTop ? checkboxTop.checked : false;
+    // Ajouter événements checkbox pour filtrer artistes
+    const topCheckbox = document.getElementById(`filter_artistes_top_${profil}`);
+    if(topCheckbox){
+        topCheckbox.onchange = ()=> fillTopArtistes(`table_top_artistes_${profil}`, data, profil, topCheckbox.checked);
+    }
 
-    if(ctxTopArt) graphTopArtistes(ctxTopArt.getContext('2d'), data, profil, minOccur);
-    if(ctxBottomArt) graphBottomArtistes(ctxBottomArt.getContext('2d'), data, profil, minOccur);
-    if(ctxTopMus) graphTopMusiques(ctxTopMus.getContext('2d'), data, profil);
-    if(ctxBottomMus) graphBottomMusiques(ctxBottomMus.getContext('2d'), data, profil);
-
-    // Recalculer si checkbox change
-    if(checkboxTop){
-        checkboxTop.onchange = ()=> createArtistAndMusicGraphs(profil, data);
+    const bottomCheckbox = document.getElementById(`filter_artistes_bottom_${profil}`);
+    if(bottomCheckbox){
+        bottomCheckbox.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckbox.checked);
     }
 }
 
@@ -470,4 +502,5 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
