@@ -1,10 +1,18 @@
 // ===============================
 // Fonction pour afficher une page
 // ===============================
+let csvData = null; // stocke les données CSV globalement
+const chartInstances = {}; // stocke les instances Chart.js pour destruction si nécessaire
+
 function showPage(page) {
     const pages = document.querySelectorAll('.page');
     pages.forEach(p => p.classList.remove('active'));
     document.getElementById(page).classList.add('active');
+
+    // Créer les graphiques uniquement lorsque la page devient active
+    if (csvData) {
+        createGraphsForProfile(page, csvData);
+    }
 }
 
 // ===============================
@@ -46,7 +54,10 @@ function graphRepartitionSexe(ctx, data, profil) {
         }
     });
 
-    new Chart(ctx, {
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`pie_${profil}`]) chartInstances[`pie_${profil}`].destroy();
+
+    chartInstances[`pie_${profil}`] = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: Object.keys(counts),
@@ -58,9 +69,9 @@ function graphRepartitionSexe(ctx, data, profil) {
         options: {
             responsive: true,
             animation: {
-                duration: 500,          // durée de l’animation en ms
-                animateRotate: true,    // fait tourner le cercle
-                animateScale: true      // fait apparaître en grandissant depuis le centre
+                duration: 800,
+                animateRotate: true,
+                animateScale: true
             },
             maintainAspectRatio: false,
             plugins: { legend: { position: 'top' } }
@@ -99,7 +110,10 @@ function graphMoyenneParSexe(ctx, data, profil) {
 
     const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k]/counts[k] : 0);
 
-    new Chart(ctx, {
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`bar_${profil}`]) chartInstances[`bar_${profil}`].destroy();
+
+    chartInstances[`bar_${profil}`] = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: Object.keys(sums),
@@ -112,9 +126,9 @@ function graphMoyenneParSexe(ctx, data, profil) {
         options: {
             responsive: true,
             animation: {
-                duration: 500,           // durée de l’animation en ms
-                easing: 'easeOutCubic',  // effet de montée fluide
-                from: 0                  // démarre les barres à 0
+                duration: 800,
+                easing: 'easeOutCubic',
+                from: 0
             },
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
@@ -141,21 +155,11 @@ function createGraphsForProfile(profil, data) {
 // ===============================
 window.onload = function() {
     d3.csv("data/table_xxl.csv").then(function(data) {
-
-        // Graphes par juré
-        ["Laurana","Andy","Anna","Melyssa","Gwenola"].forEach(profil => {
-            createGraphsForProfile(profil, data);
-        });
-
-        // Graphes Moyenne
-        createGraphsForProfile("Moyenne", data);
+        csvData = data; // stocker globalement pour showPage
 
         // Afficher la page Moyenne par défaut
         showPage("Moyenne");
-
     }).catch(function(error) {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
-
-
