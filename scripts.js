@@ -144,35 +144,6 @@ function graphMoyenneParSexe(ctx, data, profil) {
     });
 }
 
-    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k]/counts[k] : 0);
-
-    // Détruire le chart précédent si nécessaire
-    if (chartInstances[`bar_${profil}`]) chartInstances[`bar_${profil}`].destroy();
-
-    chartInstances[`bar_${profil}`] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(sums),
-            datasets: [{
-                label: profil === "Moyenne" ? "Moyenne des notes" : `Notes de ${profil}`,
-                data: averages,
-                backgroundColor: Object.keys(sums).map(getSexeColor)
-            }]
-        },
-        options: {
-            responsive: true,
-            animation: {
-                duration: 800,
-                easing: 'easeOutCubic',
-                from: 0
-            },
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, max: 10 } }
-        }
-    });
-}
-
 // ===============================
 // Créer les graphes pour un profil
 // ===============================
@@ -199,4 +170,5 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
