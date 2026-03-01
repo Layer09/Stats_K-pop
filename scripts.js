@@ -1014,7 +1014,7 @@ window.onload = function () {
                 },
                 options: defaultOptions
             });
-        });
+        };
 
         // ===============================
         // GRAPHIQUES PAR PROFIL
@@ -1111,5 +1111,6 @@ window.onload = function () {
     });
 
 };
+
 
 
