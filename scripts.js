@@ -478,6 +478,16 @@ function createTablesForProfile(profil, data){
     if(bottomCheckbox){
         bottomCheckbox.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckbox.checked);
     }
+
+    const topCheckbox = document.getElementById(`group_artistes_top_${profil}`);
+    if(topCheckbox){
+        topCheckbox.onchange = ()=> fillTopArtistes(`table_top_artistes_${profil}`, data, profil, topCheckbox.checked);
+    }
+
+    const bottomCheckbox = document.getElementById(`group_artistes_bottom_${profil}`);
+    if(bottomCheckbox){
+        bottomCheckbox.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckbox.checked);
+    }
 }
 
 // ===============================
@@ -493,6 +503,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
