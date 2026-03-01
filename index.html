@@ -57,6 +57,67 @@
                     </div>
                 </div>
             </div>
+
+            <!-- 10 meilleurs artistes -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-black">
+                        10 meilleurs artistes
+                        <div class="form-check float-end">
+                            <input class="form-check-input" type="checkbox" id="filter_artistes_top_Laurana">
+                            <label class="form-check-label" for="filter_artistes_top_Laurana">
+                                Enlever les occurrences peu fréquentes
+                            </label>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="graph_top_artistes_Laurana"></canvas>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Meilleures chansons -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-success text-black">
+                        Meilleures chansons
+                    </div>
+                    <div class="card-body">
+                        <canvas id="graph_top_chansons_Laurana"></canvas>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- 10 artistes moins appréciés -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-danger text-black">
+                        10 artistes moins appréciés
+                        <div class="form-check float-end">
+                            <input class="form-check-input" type="checkbox" id="filter_artistes_bottom_Laurana">
+                            <label class="form-check-label" for="filter_artistes_bottom_Laurana">
+                                Enlever les occurrences peu fréquentes
+                            </label>
+                        </div>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="graph_bottom_artistes_Laurana"></canvas>
+                    </div>
+                </div>
+            </div>
+        
+            <!-- Moins bonnes chansons -->
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-danger text-black">
+                        Moins bonnes chansons
+                    </div>
+                    <div class="card-body">
+                        <canvas id="graph_bottom_chansons_Laurana"></canvas>
+                    </div>
+                </div>
+            </div>
+            
         </div>
     </div>
 
@@ -186,3 +247,4 @@
 
 </body>
 </html>
+
