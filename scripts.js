@@ -12,6 +12,7 @@ function showPage(page) {
     // Créer les graphiques uniquement lorsque la page devient active
     if (csvData) {
         createGraphsForProfile(page, csvData);
+        createArtistAndMusicGraphs(page, csvData);
     }
 }
 
@@ -469,3 +470,4 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
