@@ -16,20 +16,6 @@ window.onload = function () {
     d3.csv("data/table_xxl.csv").then(function (data) {
 
         console.log("Données CSV chargées :", data);
-
-
-        // ===============================
-        // CONFIGURATION COMMUNE CHART.JS
-        // ===============================
-        const defaultOptions = {
-            responsive: true,
-            maintainAspectRatio: false
-        };
-
-
-        // =====================================================
-        // BASE COMMUNE + NIVEAU 1
-        // =====================================================
         
         // ===============================
         // CONFIGURATION GLOBALE
@@ -1125,4 +1111,5 @@ window.onload = function () {
     });
 
 };
+
 
