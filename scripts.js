@@ -57,6 +57,10 @@ function graphRepartitionSexe(ctx, data, profil) {
         },
         options: {
             responsive: true,
+            animation: {
+                animateRotate: true,    // fait tourner le cercle
+                animateScale: true      // fait apparaître en grandissant depuis le centre
+            },
             maintainAspectRatio: false,
             plugins: { legend: { position: 'top' } }
         }
@@ -106,6 +110,10 @@ function graphMoyenneParSexe(ctx, data, profil) {
         },
         options: {
             responsive: true,
+            animation: {
+                duration: 500,          // durée de l’animation en ms
+                easing: 'easeOutBounce'  // effet d’accélération/décélération
+            },
             maintainAspectRatio: false,
             plugins: { legend: { display: false } },
             scales: { y: { beginAtZero: true, max: 10 } }
@@ -147,3 +155,4 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
