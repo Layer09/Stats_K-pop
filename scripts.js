@@ -52,17 +52,26 @@ function getNotes(d, profil){
 
     if(profil==="Moyenne"){
         jures.forEach(j=>{
-            const n1=parseFloat(d[`Note_1_${j}`]);
             const n2=parseFloat(d[`Note_2_${j}`]);
-            if(!isNaN(n1)) notes.push(n1);
-            if(!isNaN(n2)) notes.push(n2);
+            const n1=parseFloat(d[`Note_1_${j}`]);
+
+            if(!isNaN(n2)){
+                notes.push(n2);   // priorité à Note_2
+            } else if(!isNaN(n1)){
+                notes.push(n1);
+            }
         });
     } else {
-        const n1=parseFloat(d[`Note_1_${profil}`]);
         const n2=parseFloat(d[`Note_2_${profil}`]);
-        if(!isNaN(n1)) notes.push(n1);
-        if(!isNaN(n2)) notes.push(n2);
+        const n1=parseFloat(d[`Note_1_${profil}`]);
+
+        if(!isNaN(n2)){
+            notes.push(n2);
+        } else if(!isNaN(n1)){
+            notes.push(n1);
+        }
     }
+
     return notes;
 }
 
@@ -361,8 +370,7 @@ function fillTopMusiques(tableId,data,profil){
             <td>${m.titre}</td>
             <td>${m.artiste}</td>
             <td>${m.annee}</td>
-            <td>${m.moyenne.toFixed(2)}</td>
-        `;
+            `;
         tbody.appendChild(tr);
     });
 }
@@ -471,6 +479,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
