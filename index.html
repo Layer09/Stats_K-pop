@@ -50,7 +50,8 @@
 <div id="Laurana" class="page container py-4">
     <h2 class="mb-4">Profil Laurana</h2>
     <div class="row g-4">
-
+    
+        <!-- ================= NIVEAU 1 ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Notes</div>
@@ -59,7 +60,7 @@
                 </div>
             </div>
         </div>
-
+    
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Artistes</div>
@@ -68,7 +69,7 @@
                 </div>
             </div>
         </div>
-
+    
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Compagnie</div>
@@ -77,7 +78,7 @@
                 </div>
             </div>
         </div>
-
+    
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Sexe</div>
@@ -86,7 +87,7 @@
                 </div>
             </div>
         </div>
-
+    
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Taille</div>
@@ -95,7 +96,7 @@
                 </div>
             </div>
         </div>
-
+    
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm">
                 <div class="card-header bg-primary text-white">Génération</div>
@@ -104,7 +105,203 @@
                 </div>
             </div>
         </div>
-
+    
+        <!-- ================= NIVEAU 2 ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Moyenne par génération</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_generation"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Moyenne par sexe</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_sexe"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Moyenne par type</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_type"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Evolution par année</div>
+                <div class="card-body">
+                    <canvas id="graph_evolution_annee"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Evolution par génération</div>
+                <div class="card-body">
+                    <canvas id="graph_evolution_generation"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Evolution par sexe</div>
+                <div class="card-body">
+                    <canvas id="graph_evolution_sexe"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-success text-white">Evolution par juré</div>
+                <div class="card-body">
+                    <canvas id="graph_evolution_jure"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <!-- ================= NIVEAU 3 ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Génération × Sexe</div>
+                <div class="card-body">
+                    <canvas id="graph_generation_sexe"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Compagnie × Génération</div>
+                <div class="card-body">
+                    <canvas id="graph_compagnie_generation"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Artiste × Juré</div>
+                <div class="card-body">
+                    <canvas id="graph_artiste_jure"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Taille × Sexe</div>
+                <div class="card-body">
+                    <canvas id="graph_taille_sexe"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Top 10 Titres</div>
+                <div class="card-body">
+                    <canvas id="graph_top10"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Bottom 10 Titres</div>
+                <div class="card-body">
+                    <canvas id="graph_bottom10"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-warning text-white">Distribution des notes</div>
+                <div class="card-body">
+                    <canvas id="graph_distribution"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <!-- ================= NIVEAU 4 ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Moyenne par Artiste (Menu)</div>
+                <div class="card-body">
+                    <select id="select_artiste" class="form-select mb-3">
+                        <option value="Tous" selected>Tous</option>
+                        <!-- Options générées dynamiquement par JS si nécessaire -->
+                    </select>
+                    <canvas id="graph_artiste_dropdown"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Moyenne Sexes × Générations</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_sexe_multi"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Moyenne par Episode</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_episode"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Génération dominante par artiste</div>
+                <div class="card-body">
+                    <canvas id="graph_generation_dominante"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Moyenne cumulative par année</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_cumulative"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Moyenne par type vidéo</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_type_video"></canvas>
+                </div>
+            </div>
+        </div>
+    
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-danger text-white">Moyenne par groupe</div>
+                <div class="card-body">
+                    <canvas id="graph_moyenne_groupe"></canvas>
+                </div>
+            </div>
+        </div>
+    
     </div>
 </div>
 
@@ -215,3 +412,4 @@
 
 </body>
 </html>
+
