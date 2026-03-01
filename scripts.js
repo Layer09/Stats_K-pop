@@ -469,24 +469,24 @@ function createTablesForProfile(profil, data){
     fillBottomMusiques(`table_bottom_chansons_${profil}`, data, profil);
 
     // Ajouter événements checkbox pour filtrer artistes
-    const topCheckbox = document.getElementById(`filter_artistes_top_${profil}`);
-    if(topCheckbox){
-        topCheckbox.onchange = ()=> fillTopArtistes(`table_top_artistes_${profil}`, data, profil, topCheckbox.checked);
+    const topCheckboxFil = document.getElementById(`filter_artistes_top_${profil}`);
+    if(topCheckboxFil){
+        topCheckboxFil.onchange = ()=> fillTopArtistes(`table_top_artistes_${profil}`, data, profil, topCheckboxFil.checked);
     }
 
-    const bottomCheckbox = document.getElementById(`filter_artistes_bottom_${profil}`);
-    if(bottomCheckbox){
-        bottomCheckbox.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckbox.checked);
+    const bottomCheckboxFil = document.getElementById(`filter_artistes_bottom_${profil}`);
+    if(bottomCheckboxFil){
+        bottomCheckboxFil.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckboxFil.checked);
     }
 
-    const topCheckbox = document.getElementById(`group_artistes_top_${profil}`);
-    if(topCheckbox){
-        topCheckbox.onchange = ()=> fillTopArtistes(`table_top_artistes_${profil}`, data, profil, topCheckbox.checked);
+    const topCheckboxGrp = document.getElementById(`group_artistes_top_${profil}`);
+    if(topCheckboxGrp){
+        topCheckboxGrp.onchange = ()=> fillTopArtistes(`table_top_artistes_${profil}`, data, profil, topCheckboxGrp.checked);
     }
 
-    const bottomCheckbox = document.getElementById(`group_artistes_bottom_${profil}`);
-    if(bottomCheckbox){
-        bottomCheckbox.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckbox.checked);
+    const bottomCheckboxGrp = document.getElementById(`group_artistes_bottom_${profil}`);
+    if(bottomCheckboxGrp){
+        bottomCheckboxGrp.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckboxGrp.checked);
     }
 }
 
@@ -503,6 +503,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
