@@ -13,6 +13,20 @@
         .page { display: none; }
         .active { display: block; }
         canvas { width: 100% !important; height: 300px !important; }
+
+        .fixed-card-body {
+            height: 420px;   /* Hauteur fixe pour toutes les cartes */
+            overflow: hidden;
+        }
+        
+        .table-scroll {
+            height: 100%;
+            overflow-y: auto;
+        }
+        
+        canvas {
+            max-height: 100% !important;
+        }
     </style>
 </head>
 
@@ -36,130 +50,157 @@
 
 <div class="container py-4">
 
-    <!-- Profils individuels -->
-    <div id="Laurana" class="page">
-        <h2 class="mb-4">Profil Laurana</h2>
-        <div class="row g-4">
-        <!-- ARTISTES TOP -->
-            <div class="card-header bg-success text-black d-flex justify-content-between align-items-center">
-                <span>10 meilleurs artistes</span>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="group_artistes_top_Laurana" checked>
-                        <label class="form-check-label">Regrouper par groupe</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="filter_artistes_top_Laurana">
-                        <label class="form-check-label">Enlever les occurrences peu fréquentes</label>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered" id="table_top_artistes_Laurana">
-                    <thead>
-                        <tr>
-                            <th>Classement</th>
-                            <th>Artiste</th>
-                            <th>Génération</th>
-                            <th>Nombre de titres</th>
-                            <th>Note</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- MEILLEURES CHANSONS -->
-        <div class="card shadow-sm mt-4">
-            <div class="card-header bg-success text-black">
-                Meilleures chansons
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered" id="table_top_chansons_Laurana">
-                    <thead>
-                        <tr>
-                            <th>Titre</th>
-                            <th>Artiste</th>
-                            <th>Année</th>
-                            <th id="top_label_note_Laurana">Note</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- ARTISTES BOTTOM -->
-        <div class="card shadow-sm mt-4">
-            <div class="card-header bg-danger text-black d-flex justify-content-between align-items-center">
-                <span>10 artistes moins appréciés</span>
-                <div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="group_artistes_bottom_Laurana" checked>
-                        <label class="form-check-label">Regrouper par groupe</label>
-                    </div>
-                    <div class="form-check form-check-inline">
-                        <input class="form-check-input" type="checkbox" id="filter_artistes_bottom_Laurana">
-                        <label class="form-check-label">Enlever les occurrences peu fréquentes</label>
-                    </div>
-                </div>
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered" id="table_bottom_artistes_Laurana">
-                    <thead>
-                        <tr>
-                            <th>Classement</th>
-                            <th>Artiste</th>
-                            <th>Génération</th>
-                            <th>Nombre de titres</th>
-                            <th>Note</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-        </div>
-        
-        <!-- MOINS BONNES CHANSONS -->
-        <div class="card shadow-sm mt-4">
-            <div class="card-header bg-danger text-black">
-                Moins bonnes chansons
-            </div>
-            <div class="card-body">
-                <table class="table table-bordered" id="table_bottom_chansons_Laurana">
-                    <thead>
-                        <tr>
-                            <th>Classement</th>
-                            <th>Titre</th>
-                            <th>Artiste</th>
-                            <th>Année</th>
-                            <th id="bottom_label_note_Laurana">Note</th>
-                        </tr>
-                    </thead>
-                    <tbody></tbody>
-                </table>
-            </div>
-    
-            <div class="col-12 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">Nombre de musiques par sexe</div>
-                    <div class="card-body">
-                        <canvas id="graph_sexe_Laurana"></canvas>
-                    </div>
-                </div>
-            </div>
+<!-- Profils individuels -->
+<div id="Laurana" class="page">
+    <h2 class="mb-4">Profil Laurana</h2>
 
-            <div class="col-12 col-lg-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">Moyenne des notes par sexe</div>
-                    <div class="card-body">
-                        <canvas id="graph_moyenne_sexe_Laurana"></canvas>
+    <div class="row g-4">
+
+        <!-- ================= TOP ARTISTES ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-black d-flex justify-content-between align-items-center">
+                    <span>10 meilleurs artistes</span>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="group_artistes_top_Laurana" checked>
+                            <label class="form-check-label">Regrouper par groupe</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="filter_artistes_top_Laurana">
+                            <label class="form-check-label">Enlever les occurrences peu fréquentes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body fixed-card-body">
+                    <div class="table-responsive table-scroll">
+                        <table class="table table-bordered mb-0" id="table_top_artistes_Laurana">
+                            <thead>
+                                <tr>
+                                    <th>Classement</th>
+                                    <th>Artiste</th>
+                                    <th>Génération</th>
+                                    <th>Nombre de titres</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
                     </div>
                 </div>
             </div>
+        </div>
+
+        <!-- ================= MEILLEURES CHANSONS ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-success text-black">
+                    Meilleures chansons
+                </div>
+                <div class="card-body fixed-card-body">
+                    <div class="table-responsive table-scroll">
+                        <table class="table table-bordered mb-0" id="table_top_chansons_Laurana">
+                            <thead>
+                                <tr>
+                                    <th>Titre</th>
+                                    <th>Artiste</th>
+                                    <th>Année</th>
+                                    <th id="top_label_note_Laurana">Note</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= BOTTOM ARTISTES ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-black d-flex justify-content-between align-items-center">
+                    <span>10 artistes moins appréciés</span>
+                    <div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="group_artistes_bottom_Laurana" checked>
+                            <label class="form-check-label">Regrouper par groupe</label>
+                        </div>
+                        <div class="form-check form-check-inline">
+                            <input class="form-check-input" type="checkbox" id="filter_artistes_bottom_Laurana">
+                            <label class="form-check-label">Enlever les occurrences peu fréquentes</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="card-body fixed-card-body">
+                    <div class="table-responsive table-scroll">
+                        <table class="table table-bordered mb-0" id="table_bottom_artistes_Laurana">
+                            <thead>
+                                <tr>
+                                    <th>Classement</th>
+                                    <th>Artiste</th>
+                                    <th>Génération</th>
+                                    <th>Nombre de titres</th>
+                                    <th>Note</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= MOINS BONNES CHANSONS ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-danger text-black">
+                    Moins bonnes chansons
+                </div>
+                <div class="card-body fixed-card-body">
+                    <div class="table-responsive table-scroll">
+                        <table class="table table-bordered mb-0" id="table_bottom_chansons_Laurana">
+                            <thead>
+                                <tr>
+                                    <th>Classement</th>
+                                    <th>Titre</th>
+                                    <th>Artiste</th>
+                                    <th>Année</th>
+                                    <th id="bottom_label_note_Laurana">Note</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= GRAPH 1 ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    Nombre de musiques par sexe
+                </div>
+                <div class="card-body fixed-card-body d-flex align-items-center">
+                    <canvas id="graph_sexe_Laurana"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= GRAPH 2 ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    Moyenne des notes par sexe
+                </div>
+                <div class="card-body fixed-card-body d-flex align-items-center">
+                    <canvas id="graph_moyenne_sexe_Laurana"></canvas>
+                </div>
+            </div>
+        </div>
 
     </div>
+</div>
 
     <div id="Anna" class="page">
         <h2 class="mb-4">Profil Anna</h2>
@@ -264,6 +305,7 @@
 
 </body>
 </html>
+
 
 
 
