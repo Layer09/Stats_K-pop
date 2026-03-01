@@ -1,157 +1,218 @@
-// Fonction pour afficher la page sélectionnée et masquer les autres
+// ===============================
+// Fonction pour afficher une page
+// ===============================
 function showPage(page) {
     const pages = document.querySelectorAll('.page');
     pages.forEach(p => p.classList.remove('active'));
     document.getElementById(page).classList.add('active');
 }
 
-// Charger les données CSV
-window.onload = function() {
-    d3.csv("data/table_xxl.csv").then(function(data) {
-        console.log("Données CSV chargées avec succès", data); // Vérification du chargement des données
 
-        // Fonction pour créer un graphique à barres
-        function createBarChart(ctx, labels, data) {
+// ===============================
+// Chargement du CSV
+// ===============================
+window.onload = function () {
+
+    d3.csv("data/table_xxl.csv").then(function (data) {
+
+        console.log("Données CSV chargées :", data);
+
+
+        // ===============================
+        // CONFIGURATION COMMUNE CHART.JS
+        // ===============================
+        const defaultOptions = {
+            responsive: true,
+            maintainAspectRatio: false
+        };
+
+
+        // ===============================
+        // GRAPHIQUE BARRES (Notes)
+        // ===============================
+        function createBarChart(ctx, labels, dataValues) {
+
             new Chart(ctx, {
                 type: 'bar',
                 data: {
                     labels: labels,
                     datasets: [{
                         label: 'Notes',
-                        data: data,
-                        backgroundColor: 'rgba(75, 192, 192, 0.2)',
-                        borderColor: 'rgba(75, 192, 192, 1)',
+                        data: dataValues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.5)',
+                        borderColor: 'rgba(54, 162, 235, 1)',
                         borderWidth: 1
                     }]
-                }
+                },
+                options: defaultOptions
             });
         }
 
-        // Fonction pour créer un graphique des artistes (pie chart)
+
+        // ===============================
+        // PIE ARTISTES
+        // ===============================
         function createArtistesGraph(ctx, data) {
+
             let artistesCount = data.reduce((acc, d) => {
                 acc[d.Artiste] = (acc[d.Artiste] || 0) + 1;
                 return acc;
             }, {});
-            let labels = Object.keys(artistesCount);
-            let values = Object.values(artistesCount);
 
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: labels,
+                    labels: Object.keys(artistesCount),
                     datasets: [{
-                        data: values,
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF914D'],
+                        data: Object.values(artistesCount),
+                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#4BC0C0', '#9966FF']
                     }]
-                }
+                },
+                options: defaultOptions
             });
         }
 
-        // Fonction pour créer un graphique des compagnies (pie chart)
+
+        // ===============================
+        // PIE COMPAGNIE
+        // ===============================
         function createCompagnieGraph(ctx, data) {
+
             let compagnieCount = data.reduce((acc, d) => {
                 acc[d.Compagnie] = (acc[d.Compagnie] || 0) + 1;
                 return acc;
             }, {});
-            let labels = Object.keys(compagnieCount);
-            let values = Object.values(compagnieCount);
 
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: labels,
+                    labels: Object.keys(compagnieCount),
                     datasets: [{
-                        data: values,
-                        backgroundColor: ['#FF6384', '#36A2EB', '#FFCE56', '#FF914D'],
+                        data: Object.values(compagnieCount),
+                        backgroundColor: ['#FF9F40', '#4BC0C0', '#9966FF', '#FF6384']
                     }]
-                }
+                },
+                options: defaultOptions
             });
         }
 
-        // Fonction pour créer un graphique des sexes (pie chart)
+
+        // ===============================
+        // PIE SEXE
+        // ===============================
         function createSexeGraph(ctx, data) {
+
             let sexeCount = data.reduce((acc, d) => {
                 acc[d.Sexe] = (acc[d.Sexe] || 0) + 1;
                 return acc;
             }, {});
-            let labels = Object.keys(sexeCount);
-            let values = Object.values(sexeCount);
 
             new Chart(ctx, {
                 type: 'pie',
                 data: {
-                    labels: labels,
+                    labels: Object.keys(sexeCount),
                     datasets: [{
-                        data: values,
-                        backgroundColor: ['#FF6384', '#36A2EB'],
+                        data: Object.values(sexeCount),
+                        backgroundColor: ['#36A2EB', '#FF6384']
                     }]
-                }
+                },
+                options: defaultOptions
             });
         }
 
-        // Créer les graphiques pour chaque profil
+
+        // ===============================
+        // GRAPHIQUES PAR PROFIL
+        // ===============================
         function createGraphsForProfile(profile, data) {
-            let ctx1 = document.getElementById(`graph_notes_${profile}`);
-            if (ctx1) {
-                ctx1 = ctx1.getContext('2d');
-                createBarChart(ctx1, data.map(d => d.Artiste), data.map(d => d[`Note_1_${profile}`]));
-            } else {
-                console.error(`Graphique pour graph_notes_${profile} introuvable.`);
+
+            // Notes
+            let ctxNotes = document.getElementById(`graph_notes_${profile}`);
+            if (ctxNotes) {
+                createBarChart(
+                    ctxNotes.getContext('2d'),
+                    data.map(d => d.Artiste),
+                    data.map(d => parseFloat(d[`Note_1_${profile}`]) || 0)
+                );
             }
 
-            let ctx2 = document.getElementById(`graph_artistes_${profile}`);
-            if (ctx2) {
-                ctx2 = ctx2.getContext('2d');
-                createArtistesGraph(ctx2, data);
-            } else {
-                console.error(`Graphique pour graph_artistes_${profile} introuvable.`);
+            // Artistes
+            let ctxArtistes = document.getElementById(`graph_artistes_${profile}`);
+            if (ctxArtistes) {
+                createArtistesGraph(ctxArtistes.getContext('2d'), data);
             }
 
-            let ctx3 = document.getElementById(`graph_compagnie_${profile}`);
-            if (ctx3) {
-                ctx3 = ctx3.getContext('2d');
-                createCompagnieGraph(ctx3, data);
-            } else {
-                console.error(`Graphique pour graph_compagnie_${profile} introuvable.`);
+            // Compagnie
+            let ctxCompagnie = document.getElementById(`graph_compagnie_${profile}`);
+            if (ctxCompagnie) {
+                createCompagnieGraph(ctxCompagnie.getContext('2d'), data);
             }
 
-            let ctx4 = document.getElementById(`graph_sexe_${profile}`);
-            if (ctx4) {
-                ctx4 = ctx4.getContext('2d');
-                createSexeGraph(ctx4, data);
-            } else {
-                console.error(`Graphique pour graph_sexe_${profile} introuvable.`);
+            // Sexe
+            let ctxSexe = document.getElementById(`graph_sexe_${profile}`);
+            if (ctxSexe) {
+                createSexeGraph(ctxSexe.getContext('2d'), data);
             }
         }
 
-        // Créer les graphiques pour la Moyenne
+
+        // ===============================
+        // GRAPHIQUES MOYENNE
+        // ===============================
         function createMoyenneGraphs(data) {
+
             let moyenneNotes = data.map(d => (
-                (parseFloat(d.Note_1_Andy) + parseFloat(d.Note_2_Andy) + parseFloat(d.Note_1_Anna) + parseFloat(d.Note_1_Gwenola)) / 4
+                (
+                    (parseFloat(d.Note_2_Laurana) || 0) +
+                    (parseFloat(d.Note_2_Andy) || 0) +
+                    (parseFloat(d.Note_1_Anna) || 0) +
+                    (parseFloat(d.Note_2_Melyssa) || 0) +
+                    (parseFloat(d.Note_1_Gwenola) || 0)
+                ) / 5
             ));
-            let ctx1 = document.getElementById('moyenne_graph').getContext('2d');
-            createBarChart(ctx1, data.map(d => d.Annee), moyenneNotes);
 
-            let ctx2 = document.getElementById('graph_artistes_moyenne').getContext('2d');
-            createArtistesGraph(ctx2, data);
+            let ctxMoyenne = document.getElementById('moyenne_graph');
+            if (ctxMoyenne) {
+                createBarChart(
+                    ctxMoyenne.getContext('2d'),
+                    data.map(d => d.Annee),
+                    moyenneNotes
+                );
+            }
 
-            let ctx3 = document.getElementById('graph_sexe_moyenne').getContext('2d');
-            createSexeGraph(ctx3, data);
+            let ctxArtistesMoy = document.getElementById('graph_artistes_moyenne');
+            if (ctxArtistesMoy) {
+                createArtistesGraph(ctxArtistesMoy.getContext('2d'), data);
+            }
+
+            let ctxSexeMoy = document.getElementById('graph_sexe_moyenne');
+            if (ctxSexeMoy) {
+                createSexeGraph(ctxSexeMoy.getContext('2d'), data);
+            }
+
+            let ctxCompagnieMoy = document.getElementById('graph_compagnie_moyenne');
+            if (ctxCompagnieMoy) {
+                createCompagnieGraph(ctxCompagnieMoy.getContext('2d'), data);
+            }
         }
 
-        // Créer les graphiques pour tous les profils
-        createGraphsForProfile('Andy', data);
+
+        // ===============================
+        // LANCEMENT
+        // ===============================
         createGraphsForProfile('Laurana', data);
+        createGraphsForProfile('Andy', data);
         createGraphsForProfile('Anna', data);
+        createGraphsForProfile('Melyssa', data);
         createGraphsForProfile('Gwenola', data);
 
-        // Créer les graphiques pour la Moyenne
         createMoyenneGraphs(data);
 
-        // Afficher la page de Moyenne au départ
+        // Page affichée au démarrage
         showPage('Moyenne');
-    }).catch(function(error) {
-        console.error("Erreur lors du chargement du fichier CSV", error);
+
+    }).catch(function (error) {
+        console.error("Erreur lors du chargement du CSV :", error);
     });
-}
+
+};
