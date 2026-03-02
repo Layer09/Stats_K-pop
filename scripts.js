@@ -203,6 +203,9 @@ function fillTopArtistes(tableId,data,profil){
     const tbody=document.querySelector(`#${tableId} tbody`);
     tbody.innerHTML="";
 
+    console.log("tableId:", tableId);
+    console.log("table:", document.getElementById(tableId));
+
     const groupBy=document.getElementById(`group_artistes_top_${profil}`).checked;
     const minOccur=document.getElementById(`filter_artistes_top_${profil}`).checked;
 
@@ -503,6 +506,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
