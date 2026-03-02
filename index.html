@@ -29,12 +29,17 @@
         }
 
         .bg-purple {
-            background-color: #8e44ad;
+            background-color: #b068ce;
         }
         
-        .bg-yellow {
-            background-color: #a8d8ff;
+        .bg-green {
+            background-color: #1abc70;
         }
+
+        .bg-red {
+            background-color: #da5e5e;
+        }
+        
     </style>
 </head>
 
@@ -45,11 +50,10 @@
     <div class="container-fluid justify-content-center gap-2 flex-wrap">
         <button class="btn btn-info" onclick="showPage('Laurana')">Laurana</button>
         <button class="btn btn-warning" onclick="showPage('Andy')">Andy</button>
-        <button class="btn btn-success" onclick="showPage('Anna')">Anna</button>
+        <button class="btn btn-green" onclick="showPage('Anna')">Anna</button>
         <button class="btn bg-purple" onclick="showPage('Melyssa')">Melyssa</button>
-        <button class="btn btn-danger" onclick="showPage('Gwenola')">Gwenola</button>
-        <div></div>
-        <button class="btn btn-white" onclick="showPage('Moyenne')">Moyenne</button>
+        <button class="btn btn-red" onclick="showPage('Gwenola')">Gwenola</button>
+        <button class="btn btn-white" onclick="showPage('Moyenne')"><b>Moyenne</b></button>
     </div>
 </nav>
 
@@ -104,7 +108,7 @@
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-danger text-black d-flex justify-content-between align-items-center">
-                    <span>10 artistes moins appréciés</span>
+                    <span><b>10 artistes moins appréciés</b></span>
                     <div>
                         <div class="form-check form-check-inline">
                             <input class="form-check-input" type="checkbox" id="group_artistes_bottom_Laurana" checked>
@@ -139,7 +143,7 @@
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-success text-black">
-                    Meilleures chansons
+                    <b>Meilleures chansons</b>
                 </div>
                 <div class="card-body fixed-card-body">
                     <div class="table-responsive table-scroll">
@@ -162,7 +166,7 @@
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-danger text-black">
-                    Moins bonnes chansons
+                    <b>Moins bonnes chansons</b>
                 </div>
                 <div class="card-body fixed-card-body">
                     <div class="table-responsive table-scroll">
@@ -187,7 +191,7 @@
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
-                    Nombre de musiques par sexe
+                    <b>Nombre de musiques par sexe</b>
                 </div>
                 <div class="card-body fixed-card-body d-flex align-items-center">
                     <canvas id="graph_sexe_Laurana"></canvas>
@@ -199,7 +203,7 @@
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
-                    Moyenne des notes par sexe
+                    <b>Moyenne des notes par sexe</b>
                 </div>
                 <div class="card-body fixed-card-body d-flex align-items-center">
                     <canvas id="graph_moyenne_sexe_Laurana"></canvas>
@@ -313,6 +317,7 @@
 
 </body>
 </html>
+
 
 
 
