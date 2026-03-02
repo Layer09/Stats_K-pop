@@ -201,9 +201,7 @@ function graphMoyenneParSexe(ctx, data, profil) {
 function fillTopArtistes(tableId,data,profil){
 
     //const tbody=document.querySelector(`#${tableId} tbody`);
-    const table = document.getElementById(tableId);
-    console.log("table.innerHTML:", table.innerHTML);
-    
+    const table = document.getElementById(tableId);    
     const tbody = table.querySelector("tbody");
     console.log("tbody:", tbody);
     tbody.innerHTML="";
@@ -508,6 +506,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
