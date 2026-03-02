@@ -200,11 +200,13 @@ function graphMoyenneParSexe(ctx, data, profil) {
 // Table : Top artistes
 function fillTopArtistes(tableId,data,profil){
 
-    const tbody=document.querySelector(`#${tableId} tbody`);
+    //const tbody=document.querySelector(`#${tableId} tbody`);
+    const table = document.getElementById(tableId);
+    console.log("table.innerHTML:", table.innerHTML);
+    
+    const tbody = table.querySelector("tbody");
+    console.log("tbody:", tbody);
     tbody.innerHTML="";
-
-    console.log("tableId:", tableId);
-    console.log("table:", document.getElementById(tableId));
 
     const groupBy=document.getElementById(`group_artistes_top_${profil}`).checked;
     const minOccur=document.getElementById(`filter_artistes_top_${profil}`).checked;
@@ -506,6 +508,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
