@@ -281,8 +281,21 @@ function fillTopArtistes(tableId,data,profil){
 // Table : Bottom artistes
 function fillBottomArtistes(tableId,data,profil){
 
-    const tbody=document.querySelector(`#${tableId} tbody`);
-    tbody.innerHTML="";
+    const table = document.getElementById(tableId);
+
+    if (!table) {
+        console.warn(`Table ${tableId} introuvable`);
+        return;
+    }
+
+    const tbody = table.querySelector("tbody");
+
+    if (!tbody) {
+        console.warn(`tbody absent pour ${tableId}`);
+        return;
+    }
+
+    tbody.innerHTML = "";
 
     const groupBy=document.getElementById(`group_artistes_bottom_${profil}`).checked;
     const minOccur=document.getElementById(`filter_artistes_bottom_${profil}`).checked;
@@ -348,8 +361,21 @@ function fillBottomArtistes(tableId,data,profil){
 // Table: Top musiques
 function fillTopMusiques(tableId,data,profil){
 
-    const tbody=document.querySelector(`#${tableId} tbody`);
-    tbody.innerHTML="";
+    const table = document.getElementById(tableId);
+
+    if (!table) {
+        console.warn(`Table ${tableId} introuvable`);
+        return;
+    }
+
+    const tbody = table.querySelector("tbody");
+
+    if (!tbody) {
+        console.warn(`tbody absent pour ${tableId}`);
+        return;
+    }
+
+    tbody.innerHTML = "";
 
     const label=document.getElementById(`top_label_note_${profil}`);
     if(label){
@@ -403,8 +429,21 @@ function fillTopMusiques(tableId,data,profil){
 // Table: Bottom Musiques
 function fillBottomMusiques(tableId,data,profil){
 
-    const tbody=document.querySelector(`#${tableId} tbody`);
-    tbody.innerHTML="";
+    const table = document.getElementById(tableId);
+
+    if (!table) {
+        console.warn(`Table ${tableId} introuvable`);
+        return;
+    }
+
+    const tbody = table.querySelector("tbody");
+
+    if (!tbody) {
+        console.warn(`tbody absent pour ${tableId}`);
+        return;
+    }
+
+    tbody.innerHTML = "";
 
     const label=document.getElementById(`bottom_label_note_${profil}`);
     if(label){
@@ -516,6 +555,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
