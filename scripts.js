@@ -263,7 +263,8 @@ function fillTopArtistes(tableId,data,profil){
         }
 
         const tr=document.createElement("tr");
-        tr.style.backgroundColor=getPastelSexeColor(st.sexe);
+        color = getPastelSexeColor(st.sexe);
+        tr.style.setProperty("--bs-table-bg", color);
 
         tr.innerHTML=`
             <td>${rank}</td>
@@ -345,7 +346,8 @@ function fillBottomArtistes(tableId,data,profil){
         }
 
         const tr=document.createElement("tr");
-        tr.style.backgroundColor=getPastelSexeColor(st.sexe);
+        color = getPastelSexeColor(st.sexe);
+        tr.style.setProperty("--bs-table-bg", color);
 
         tr.innerHTML=`
             <td>${rank}</td>
@@ -415,7 +417,8 @@ function fillTopMusiques(tableId,data,profil){
 
     selected.forEach(m=>{
         const tr=document.createElement("tr");
-        tr.style.backgroundColor=getPastelSexeColor(m.sexe);
+        color = getPastelSexeColor(m.sexe);
+        tr.style.setProperty("--bs-table-bg", color);
 
         tr.innerHTML=`
             <td>${m.titre}</td>
@@ -488,7 +491,8 @@ function fillBottomMusiques(tableId,data,profil){
         }
 
         const tr=document.createElement("tr");
-        tr.style.backgroundColor=getPastelSexeColor(m.sexe);
+        color = getPastelSexeColor(m.sexe);
+        tr.style.setProperty("--bs-table-bg", color);
 
         tr.innerHTML=`
             <td>${rank}</td>
@@ -555,6 +559,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
