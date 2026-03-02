@@ -39,7 +39,7 @@ function getSexeColor(label) {
 function getPastelSexeColor(label) {
     switch (label) {
         case "Fille": return "#ffd5f6";      // rose pastel
-        case "Gars": return "#bceced";       // bleu clair pastel
+        case "Gars": return "#c0e3f6";       // bleu clair pastel
         case "Mixte": return "#c3b7e7";      // violet pastel
         case "Non renseigné": return "#a1b4ed"; // bleu foncé pastel
         default: return "#CCCCCC";
@@ -559,6 +559,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
