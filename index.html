@@ -28,17 +28,12 @@
             max-height: 100% !important;
         }
 
-        button:hover {
-            opacity: 1 !important;   /* Opacité reste à 1 */
-            background-color: inherit !important; /* Héritage du fond sans changement */
-        }
-
         .bg-dark-green {
-            background-color: #096016;
+            background-color: #096016 !important;
         }
 
         .bg-dark-red {
-            background-color: #b61727;
+            background-color: #b61727 !important;
         }
 
         :root {
@@ -49,19 +44,35 @@
         }
         
         .bg-green {
-            background-color: var(--bs-green);
+            background-color: var(--bs-green) !important;
         }
 
         .bg-purple {
-            background-color: var(--bs-purple);
+            background-color: var(--bs-purple) !important;
         }
 
         .bg-red {
-            background-color: var(--bs-red);
+            background-color: var(--bs-red) !important;
         }
 
         .bg-white {
-            background-color: var(--bs-white);
+            background-color: var(--bs-white) !important;
+        }
+
+        button.bg-green:hover {
+            background-color: #1abc70 !important;
+        }
+        
+        button.bg-purple:hover {
+            background-color: #b068ce !important;
+        }
+        
+        button.bg-red:hover {
+            background-color: #da5e5e !important;
+        }
+        
+        button.bg-white:hover {
+            background-color: #ffffff !important;
         }
         
     </style>
@@ -365,6 +376,7 @@
 
 </body>
 </html>
+
 
 
 
