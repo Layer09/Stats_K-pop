@@ -46,6 +46,30 @@ function getPastelSexeColor(label) {
     }
 }
 
+// Autres couleurs
+function getChartColors(numColors) {
+    const allColors = [
+        "#0000F1", "#1BB8FF", "#40FFD2", "#8AFF87", "#D2FF40", "#FFFF09",
+        "#FFC400", "#FF6C00", "#F10700", "#F10371", "#F100BF", "#AD00F1"
+    ];
+    const subsetColors = [
+        "#0000F1", "#40FFD2", "#8AFF87", "#FFFF09", "#FFC400",
+        "#F10700", "#F100BF", "#AD00F1"
+    ];
+    const miniColors = [
+        "#0000F1", "#8AFF87", "#FFFF09", "#F10700", "#AD00F1"
+    ];
+    if (numColors <= 3) {
+        return ["#1BB8FF", "#FFFF09", "#F10700"]; // Moins de 3 couleurs
+    } else if (numColors <= 5) {
+        return miniColors.slice(0, numColors); // Moins de 5 mais plus que 3 couleurs
+    } else if (numColors <= 12) {
+        return subsetColors.slice(0, numColors); // Moins de 12 mais plus que 5 couleurs
+    } else {
+        return allColors; // Plus de 12 couleurs
+    }
+}
+
 function getNotes(d, profil){
 
     function getValidNumber(value){
@@ -167,6 +191,104 @@ function graphMoyenneParSexe(ctx, data, profil) {
                 label: profil === "Moyenne" ? "Moyenne des notes" : `Notes de ${profil}`,
                 data: averages,
                 backgroundColor: Object.keys(sums).map(getSexeColor)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic',
+                from: 0
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 10 } }
+        }
+    });
+}
+
+
+// Pie chart : Nombre de musiques par année
+function graphRepartitionAnnee(ctx, data, profil) {
+    const counts = {};
+
+    data.forEach(d => {
+        const annee = cleanValue(d.Annee); // Récupérer l'année
+        if (!counts[annee]) counts[annee] = 0; // Initialiser si nécessaire
+
+        if (profil === "Moyenne") {
+            counts[annee] += 1;
+        } else {
+            // compter uniquement si le juré a donné une note
+            const note1 = parseFloat(d[`Note_1_${profil}`]);
+            const note2 = parseFloat(d[`Note_2_${profil}`]);
+            if (!isNaN(note1) || !isNaN(note2)) counts[annee] += 1;
+        }
+    });
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`pie_${profil}`]) chartInstances[`pie_${profil}`].destroy();
+
+    chartInstances[`pie_${profil}`] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{
+                data: Object.values(counts),
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                animateRotate: true,
+                animateScale: true
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+}
+
+// Bar chart : Moyenne des notes par année
+function graphMoyenneParAnnee(ctx, data, profil) {
+    const sums = {};
+    const counts = {};
+
+    data.forEach(d => {
+        const annee = cleanValue(d.Annee); // Récupérer l'année
+        if (!sums[annee]) sums[annee] = 0;
+        if (!counts[annee]) counts[annee] = 0;
+
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0) {
+            sums[annee] += notes.reduce((a, b) => a + b, 0) / notes.length;
+            counts[annee] += 1;
+        }
+    });
+
+    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`bar_${profil}`]) chartInstances[`bar_${profil}`].destroy();
+
+    // Forcer le canvas à recalculer sa taille
+    ctx.canvas.parentNode.style.position = 'relative';
+    ctx.canvas.style.width = '100%';
+    ctx.canvas.style.height = '300px';
+    ctx.canvas.width = ctx.canvas.offsetWidth;
+    ctx.canvas.height = ctx.canvas.offsetHeight;
+
+    chartInstances[`bar_${profil}`] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(sums),
+            datasets: [{
+                label: profil === "Moyenne" ? "Moyenne des notes" : `Notes de ${profil}`,
+                data: averages,
+                backgroundColor: getChartColors(Object.keys(counts).length)
             }]
         },
         options: {
@@ -501,6 +623,12 @@ function createGraphsForProfile(profil, data) {
     const ctxBar = document.getElementById(`graph_moyenne_sexe_${profil}`);
     if (ctxBar) graphMoyenneParSexe(ctxBar.getContext('2d'), data, profil);
 
+    const ctxPie = document.getElementById(`graph_annee_${profil}`);
+    if (ctxPie) graphRepartitionAnnee(ctxPie.getContext('2d'), data, profil);
+
+    const ctxBar = document.getElementById(`graph_moyenne_annee_${profil}`);
+    if (ctxBar) graphMoyenneParAnnee(ctxBar.getContext('2d'), data, profil);
+
     // ajouter la suite de X ici pour les autres graphes...
 }
 
@@ -545,6 +673,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
