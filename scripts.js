@@ -617,19 +617,17 @@ function fillBottomMusiques(tableId,data,profil){
 // Créer les graphes pour un profil
 // ===============================
 function createGraphsForProfile(profil, data) {
-    const ctxPieSexe = document.getElementById(`graph_sexe_${profil}`);
-    console.log(ctxPieSexe);
-    if (ctxPieSexe) graphRepartitionSexe(ctxPieSexe.getContext('2d'), data, profil);
-
-    const ctxBarSexe = document.getElementById(`graph_moyenne_sexe_${profil}`);
-    console.log(ctxBarSexe);
-    if (ctxBarSexe) graphMoyenneParSexe(ctxBarSexe.getContext('2d'), data, profil);
-
     const ctxPieAnnee = document.getElementById(`graph_annee_${profil}`);
     if (ctxPieAnnee) graphRepartitionAnnee(ctxPieAnnee.getContext('2d'), data, profil);
 
     const ctxBarAnnee = document.getElementById(`graph_moyenne_annee_${profil}`);
     if (ctxBarAnnee) graphMoyenneParAnnee(ctxBarAnnee.getContext('2d'), data, profil);
+
+    const ctxPieSexe = document.getElementById(`graph_sexe_${profil}`);
+    if (ctxPieSexe) graphRepartitionSexe(ctxPieSexe.getContext('2d'), data, profil);
+
+    const ctxBarSexe = document.getElementById(`graph_moyenne_sexe_${profil}`);
+    if (ctxBarSexe) graphMoyenneParSexe(ctxBarSexe.getContext('2d'), data, profil);
 
     // ajouter la suite de X ici pour les autres graphes...
 }
@@ -675,6 +673,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
