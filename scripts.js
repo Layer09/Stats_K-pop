@@ -139,29 +139,15 @@ function graphMoyenneParSexe(ctx, data, profil) {
 
     data.forEach(d => {
         const sexe = cleanValue(d.Sexe);
-        let notes = [];
-
-        if (profil === "Moyenne") {
-            ["Laurana","Andy","Anna","Gwenola","Melyssa"].forEach(jure => {
-                const n1 = parseFloat(d[`Note_1_${jure}`]);
-                const n2 = parseFloat(d[`Note_2_${jure}`]);
-                if (!isNaN(n1)) notes.push(n1);
-                if (!isNaN(n2)) notes.push(n2);
-            });
-        } else {
-            const n1 = parseFloat(d[`Note_1_${profil}`]);
-            const n2 = parseFloat(d[`Note_2_${profil}`]);
-            if (!isNaN(n1)) notes.push(n1);
-            if (!isNaN(n2)) notes.push(n2);
-        }
+        const notes = getNotes(d, profil);
 
         if (notes.length > 0) {
-            sums[sexe] += notes.reduce((a,b) => a+b, 0) / notes.length;
+            sums[sexe] += notes.reduce((a, b) => a + b, 0) / notes.length;
             counts[sexe] += 1;
         }
     });
 
-    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k]/counts[k] : 0);
+    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
 
     // Détruire le chart précédent si nécessaire
     if (chartInstances[`bar_${profil}`]) chartInstances[`bar_${profil}`].destroy();
@@ -559,6 +545,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
