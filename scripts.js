@@ -617,39 +617,33 @@ function fillBottomMusiques(tableId,data,profil){
 // Créer les graphes pour un profil
 // ===============================
 function createGraphsForProfile(profil, data) {
+    console.log(`Création des graphiques pour le profil: ${profil}`);
+
     const ctxPieAnnee = document.getElementById(`graph_annee_${profil}`);
     if (ctxPieAnnee) {
-        if (chartInstances[`pie_annee_${profil}`]) {
-            chartInstances[`pie_annee_${profil}`].destroy();
-        }
+        console.log("Création graphique Répartition Année");
         graphRepartitionAnnee(ctxPieAnnee.getContext('2d'), data, profil);
     }
 
     const ctxBarAnnee = document.getElementById(`graph_moyenne_annee_${profil}`);
     if (ctxBarAnnee) {
-        if (chartInstances[`bar_annee_${profil}`]) {
-            chartInstances[`bar_annee_${profil}`].destroy();
-        }
+        console.log("Création graphique Moyenne Année");
         graphMoyenneParAnnee(ctxBarAnnee.getContext('2d'), data, profil);
     }
 
     const ctxPieSexe = document.getElementById(`graph_sexe_${profil}`);
     if (ctxPieSexe) {
-        if (chartInstances[`pie_sexe_${profil}`]) {
-            chartInstances[`pie_sexe_${profil}`].destroy();
-        }
+        console.log("Création graphique Répartition Sexe");
         graphRepartitionSexe(ctxPieSexe.getContext('2d'), data, profil);
     }
 
     const ctxBarSexe = document.getElementById(`graph_moyenne_sexe_${profil}`);
     if (ctxBarSexe) {
-        if (chartInstances[`bar_sexe_${profil}`]) {
-            chartInstances[`bar_sexe_${profil}`].destroy();
-        }
+        console.log("Création graphique Moyenne Sexe");
         graphMoyenneParSexe(ctxBarSexe.getContext('2d'), data, profil);
     }
 
-    // Ajouter d'autres graphes ici
+    // Ajouter la suite de X ici pour les autres graphes...
 }
 
 function createTablesForProfile(profil, data){
@@ -693,6 +687,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
