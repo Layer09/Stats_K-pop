@@ -132,9 +132,9 @@ function graphRepartitionSexe(ctx, data, profil) {
     });
 
     // Détruire le chart précédent si nécessaire
-    if (chartInstances[`pie_${profil}`]) chartInstances[`pie_${profil}`].destroy();
+    if (chartInstances[`pie_sexe_${profil}`]) chartInstances[`pie_sexe_${profil}`].destroy();
 
-    chartInstances[`pie_${profil}`] = new Chart(ctx, {
+    chartInstances[`pie_sexe_${profil}`] = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: Object.keys(counts),
@@ -174,7 +174,7 @@ function graphMoyenneParSexe(ctx, data, profil) {
     const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
 
     // Détruire le chart précédent si nécessaire
-    if (chartInstances[`bar_${profil}`]) chartInstances[`bar_${profil}`].destroy();
+    if (chartInstances[`bar_sexe_${profil}`]) chartInstances[`bar_sexe_${profil}`].destroy();
 
     // Forcer le canvas à recalculer sa taille
     ctx.canvas.parentNode.style.position = 'relative';
@@ -183,7 +183,7 @@ function graphMoyenneParSexe(ctx, data, profil) {
     ctx.canvas.width = ctx.canvas.offsetWidth;
     ctx.canvas.height = ctx.canvas.offsetHeight;
 
-    chartInstances[`bar_${profil}`] = new Chart(ctx, {
+    chartInstances[`bar_sexe_${profil}`] = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: Object.keys(sums),
@@ -227,9 +227,9 @@ function graphRepartitionAnnee(ctx, data, profil) {
     });
 
     // Détruire le chart précédent si nécessaire
-    if (chartInstances[`pie_${profil}`]) chartInstances[`pie_${profil}`].destroy();
+    if (chartInstances[`pie_annee_${profil}`]) chartInstances[`pie_annee_${profil}`].destroy();
 
-    chartInstances[`pie_${profil}`] = new Chart(ctx, {
+    chartInstances[`pie_annee_${profil}`] = new Chart(ctx, {
         type: 'pie',
         data: {
             labels: Object.keys(counts),
@@ -272,7 +272,7 @@ function graphMoyenneParAnnee(ctx, data, profil) {
     const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
 
     // Détruire le chart précédent si nécessaire
-    if (chartInstances[`bar_${profil}`]) chartInstances[`bar_${profil}`].destroy();
+    if (chartInstances[`bar_annee_${profil}`]) chartInstances[`bar_annee_${profil}`].destroy();
 
     // Forcer le canvas à recalculer sa taille
     ctx.canvas.parentNode.style.position = 'relative';
@@ -281,7 +281,7 @@ function graphMoyenneParAnnee(ctx, data, profil) {
     ctx.canvas.width = ctx.canvas.offsetWidth;
     ctx.canvas.height = ctx.canvas.offsetHeight;
 
-    chartInstances[`bar_${profil}`] = new Chart(ctx, {
+    chartInstances[`bar_annee_${profil}`] = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: Object.keys(sums),
@@ -687,6 +687,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
