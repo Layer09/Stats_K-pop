@@ -286,7 +286,7 @@ function graphMoyenneParAnnee(ctx, data, profil) {
         data: {
             labels: Object.keys(sums),
             datasets: [{
-                label: profil === "Moyenne" ? "Moyenne des notes" : `Notes de ${profil}`,
+                label: profil === "Moyenne" ? "Moyenne des notes" : `Moyenne : ${profil}`,
                 data: averages,
                 backgroundColor: getChartColors(Object.keys(counts).length)
             }]
@@ -618,9 +618,11 @@ function fillBottomMusiques(tableId,data,profil){
 // ===============================
 function createGraphsForProfile(profil, data) {
     const ctxPieSexe = document.getElementById(`graph_sexe_${profil}`);
+    console.log(ctxPieSexe);
     if (ctxPieSexe) graphRepartitionSexe(ctxPieSexe.getContext('2d'), data, profil);
 
     const ctxBarSexe = document.getElementById(`graph_moyenne_sexe_${profil}`);
+    console.log(ctxBarSexe);
     if (ctxBarSexe) graphMoyenneParSexe(ctxBarSexe.getContext('2d'), data, profil);
 
     const ctxPieAnnee = document.getElementById(`graph_annee_${profil}`);
@@ -673,6 +675,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
