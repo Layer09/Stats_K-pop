@@ -772,6 +772,7 @@ function fillBottomArtistes(tableId,data,profil){
         tbody.appendChild(tr);
     });
 }
+
 // Table : Compagnies
 function fillTopCompagnies(tableId, data, profil) {
     const table = document.getElementById(tableId);
@@ -793,6 +794,7 @@ function fillTopCompagnies(tableId, data, profil) {
     const minOccur = document.getElementById(`filter_compagnies_${profil}`).checked;
 
     let stats = {};
+    let artisteToCompagnie = {}; // Dictionnaire pour lier un artiste à sa compagnie
 
     data.forEach(d => {
         const compagnie = cleanValue(d.Compagnie); // Récupérer le nom de la compagnie
@@ -802,9 +804,14 @@ function fillTopCompagnies(tableId, data, profil) {
 
         if (notes.length === 0) return;
 
-        // Si "Groupe" est renseigné, on prend la compagnie de l'artiste, sinon on prend la compagnie de la ligne
-        const compagnieName = (groupe && groupe.trim() !== "" && groupe !== "Non renseigné") 
-            ? artiste // Utiliser l'artiste si "Groupe" est défini
+        // Si l'artiste n'a pas encore de compagnie dans le dictionnaire, on l'ajoute
+        if (artiste && compagnie !== "/Null/") {
+            artisteToCompagnie[artiste] = compagnie;
+        }
+
+        // Si "Groupe" est renseigné, on récupère la compagnie de l'artiste du groupe, sinon on prend celle de la ligne
+        const compagnieName = (groupe && groupe.trim() !== "" && groupe !== "Non renseigné" && artisteToCompagnie[groupe])
+            ? artisteToCompagnie[groupe]  // Si un groupe est défini, on prend la compagnie de l'artiste du groupe
             : (compagnie === "/Null/" ? "Sans compagnie" : compagnie); // Sinon, on garde la compagnie de la ligne
 
         let key = compagnieName; // On groupe par compagnie
@@ -859,95 +866,6 @@ function fillTopCompagnies(tableId, data, profil) {
             <td>${st.count}</td>
             <td>${avg.toFixed(2)}</td>
         `;
-        tbody.appendChild(tr);
-    });
-}
-
-// Fonction pour récupérer les notes spécifiques au profil
-function getNotes(d, profil) {
-    const notes = [];
-    // Récupérer les notes en fonction du profil
-    if (profil === 'Laurana') {
-        if (d['Note_1_Laurana']) notes.push(parseFloat(d['Note_1_Laurana']));
-        if (d['Note_2_Laurana']) notes.push(parseFloat(d['Note_2_Laurana']));
-    } else if (profil === 'Melyssa') {
-        if (d['Note_1_Melyssa']) notes.push(parseFloat(d['Note_1_Melyssa']));
-        if (d['Note_2_Melyssa']) notes.push(parseFloat(d['Note_2_Melyssa']));
-    }
-    // Ajoute d'autres conditions pour d'autres profils si nécessaire
-    return notes;
-}
-
-// Fonction pour nettoyer les valeurs
-function cleanValue(val) {
-    return val && val.trim() ? val : "Non renseigné";
-}
-
-// Table: Top musiques
-function fillTopMusiques(tableId,data,profil){
-
-    const table = document.getElementById(tableId);
-
-    if (!table) {
-        console.warn(`Table ${tableId} introuvable`);
-        return;
-    }
-
-    const tbody = table.querySelector("tbody");
-
-    if (!tbody) {
-        console.warn(`tbody absent pour ${tableId}`);
-        return;
-    }
-
-    tbody.innerHTML = "";
-
-    const label=document.getElementById(`label_note_${profil}`);
-    if(label){
-        label.innerText = profil==="Moyenne" ? "Note moyenne" : "Note";
-    }
-
-    let musiques=[];
-
-    data.forEach(d=>{
-        const notes=getNotes(d,profil);
-        if(notes.length===0) return;
-
-        const avg=notes.reduce((a,b)=>a+b,0)/notes.length;
-
-        musiques.push({
-            titre:cleanValue(d.Titre),
-            artiste:cleanValue(d.Artiste),
-            annee:cleanValue(d.Annee),
-            moyenne:avg,
-            sexe:cleanValue(d.Sexe)
-        });
-    });
-
-    musiques.sort((a,b)=>b.moyenne-a.moyenne);
-
-    let selected=[];
-
-    if(profil==="Moyenne"){
-        let i=0;
-        while(i<musiques.length && (i<10 || musiques[i].moyenne===musiques[9].moyenne)){
-            selected.push(musiques[i]);
-            i++;
-        }
-    } else {
-        selected=musiques.filter(m=>m.moyenne===10);
-    }
-
-    selected.forEach(m=>{
-        const tr=document.createElement("tr");
-        color = getPastelSexeColor(m.sexe);
-        tr.style.setProperty("--bs-table-bg", color);
-
-        tr.innerHTML=`
-            <td>${m.titre}</td>
-            <td>${m.artiste}</td>
-            <td>${m.annee}</td>
-            `;
         tbody.appendChild(tr);
     });
 }
@@ -1145,6 +1063,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
