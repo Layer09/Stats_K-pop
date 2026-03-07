@@ -743,6 +743,18 @@ function createGraphsForProfile(profil, data) {
         graphMoyenneParSexe(ctxBarSexe.getContext('2d'), data, profil);
     }
 
+    const ctxPieEpisode= document.getElementById(`graph_episode_${profil}`);
+    if (ctxPieEpisode) {
+        console.log("Création graphique Répartition Épisode");
+        graphRepartitionEpisode(ctxPieEpisode.getContext('2d'), data, profil);
+    }
+
+    const ctxBarEpisode = document.getElementById(`graph_moyenne_episode_${profil}`);
+    if (ctxBarEpisode) {
+        console.log("Création graphique Moyenne Épisode");
+        graphMoyenneParEpisode(ctxBarEpisode.getContext('2d'), data, profil);
+    }
+
     // Ajouter la suite de X ici pour les autres graphes...
 }
 
@@ -787,6 +799,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
