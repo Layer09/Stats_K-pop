@@ -246,7 +246,7 @@
             </div>
         </div>
 
-        <!-- ================= Nombre musique / génération ================= -->
+        <!-- ================= Nombre musique / Génération ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -258,7 +258,7 @@
             </div>
         </div>
 
-        <!-- ================= Moyenne / génération ================= -->
+        <!-- ================= Moyenne / Génération ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -294,8 +294,8 @@
             </div>
         </div>
 
-        <!-- ================= Moyenne / épisode ================= -->
-        <div class="col-12 col-lg-6">
+        <!-- ================= Moyenne / Épisode ================= -->
+        <div class="col-12 col-lg-12">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
                     <b>Moyenne des notes par épisodes</b>
@@ -306,7 +306,7 @@
             </div>
         </div>
 
-        <!-- ================= Moyenne / numéro ================= -->
+        <!-- ================= Moyenne / Numéro ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -318,31 +318,32 @@
             </div>
         </div>
 
-        <!-- ================= Nombre musique / compagnie ================= -->
+        <!-- ================= Compagnie ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
-                    <b>Nombre de musiques par compagnies</b>
+                    <b>Compagnies</b>
                 </div>
-                <div class="card-body fixed-card-body d-flex align-items-center">
-                    <canvas id="graph_compagnie_Laurana"></canvas>
+                <div class="card-body fixed-card-body">
+                    <div class="table-responsive table-scroll">
+                        <table class="table table-bordered mb-0" id="table_bottom_compagnie_Laurana">
+                            <thead>
+                                <tr>
+                                    <th>Classement</th>
+                                    <th>Compagnie</th>
+                                    <th>Différents artistes</th>
+                                    <th>Nombre de notes</th>
+                                    <th id="bottom_label_note_Laurana">Note</th>
+                                </tr>
+                            </thead>
+                            <tbody></tbody>
+                        </table>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <!-- ================= Moyenne / compagnie ================= -->
-        <div class="col-12 col-lg-6">
-            <div class="card shadow-sm h-100">
-                <div class="card-header bg-primary text-white">
-                    <b>Moyenne des notes par compagnies</b>
-                </div>
-                <div class="card-body fixed-card-body d-flex align-items-center">
-                    <canvas id="graph_moyenne_compagnie_Laurana"></canvas>
-                </div>
-            </div>
-        </div>
-
-        <!-- ================= Nombre musique / taille ================= -->
+        <!-- ================= Nombre musique / Taille ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -354,7 +355,7 @@
             </div>
         </div>
 
-        <!-- ================= Moyenne / taille ================= -->
+        <!-- ================= Moyenne / Taille ================= -->
         <div class="col-12 col-lg-6">
             <div class="card shadow-sm h-100">
                 <div class="card-header bg-primary text-white">
@@ -472,6 +473,7 @@
 
 </body>
 </html>
+
 
 
 
