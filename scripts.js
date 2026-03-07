@@ -1097,7 +1097,7 @@ function createTablesForProfile(profil, data){
     fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, document.getElementById(`filter_artistes_bottom_${profil}`)?.checked);
     fillTopMusiques(`table_top_chansons_${profil}`, data, profil);
     fillBottomMusiques(`table_bottom_chansons_${profil}`, data, profil);
-    fillTopCompagnies(`table_bottom_compagnie_${profil}`, data, profil, document.getElementById(`filter_compagnies_${profil}`)?.checked);
+    fillTopCompagnies(`table_compagnie_${profil}`, data, profil, document.getElementById(`filter_compagnies_${profil}`)?.checked);
 
     // Ajouter événements checkbox pour filtrer artistes
     const topCheckboxFil = document.getElementById(`filter_artistes_top_${profil}`);
@@ -1140,6 +1140,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
