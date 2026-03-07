@@ -305,6 +305,106 @@ function graphMoyenneParAnnee(ctx, data, profil) {
     });
 }
 
+
+
+// Pie chart : Nombre de musiques par épisode
+function graphRepartitionepisode(ctx, data, profil) {
+    const counts = {};
+
+    data.forEach(d => {
+        const episode = cleanValue(d.episode); // Récupérer l'épisode
+        if (!counts[episode]) counts[episode] = 0; // Initialiser si nécessaire
+
+        if (profil === "Moyenne") {
+            counts[episode] += 1;
+        } else {
+            // compter uniquement si le juré a donné une note
+            const note1 = parseFloat(d[`Note_1_${profil}`]);
+            const note2 = parseFloat(d[`Note_2_${profil}`]);
+            if (!isNaN(note1) || !isNaN(note2)) counts[episode] += 1;
+        }
+    });
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`pie_episode_${profil}`]) chartInstances[`pie_episode_${profil}`].destroy();
+
+    chartInstances[`pie_episode_${profil}`] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{
+                data: Object.values(counts),
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                animateRotate: true,
+                animateScale: true
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+}
+
+// Bar chart : Moyenne des notes par épisode
+function graphMoyenneParepisode(ctx, data, profil) {
+    const sums = {};
+    const counts = {};
+
+    data.forEach(d => {
+        const episode = cleanValue(d.episode); // Récupérer l'épisode
+        if (!sums[episode]) sums[episode] = 0;
+        if (!counts[episode]) counts[episode] = 0;
+
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0) {
+            sums[episode] += notes.reduce((a, b) => a + b, 0) / notes.length;
+            counts[episode] += 1;
+        }
+    });
+
+    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`bar_episode_${profil}`]) chartInstances[`bar_episode_${profil}`].destroy();
+
+    // Forcer le canvas à recalculer sa taille
+    ctx.canvas.parentNode.style.position = 'relative';
+    ctx.canvas.style.width = '100%';
+    ctx.canvas.style.height = '300px';
+    ctx.canvas.width = ctx.canvas.offsetWidth;
+    ctx.canvas.height = ctx.canvas.offsetHeight;
+
+    chartInstances[`bar_episode_${profil}`] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(sums),
+            datasets: [{
+                label: profil === "Moyenne" ? "Moyenne des notes" : `Moyenne : ${profil}`,
+                data: averages,
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic',
+                from: 0
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 10 } }
+        }
+    });
+}
+
+
 // Table : Top artistes
 function fillTopArtistes(tableId,data,profil){
 
@@ -687,6 +787,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
