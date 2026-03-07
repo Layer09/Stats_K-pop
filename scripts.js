@@ -360,7 +360,6 @@ function graphMoyenneParEpisode(ctx, data, profil) {
     });
 }
 
-
 // Bar chart : Moyenne des notes par numéro
 function graphMoyenneParNumero(ctx, data, profil) {
     const sums = {};
@@ -796,6 +795,16 @@ function fillTopCompagnies(tableId, data, profil) {
     let stats = {};
     let artisteToCompagnie = {}; // Dictionnaire pour lier un artiste à sa compagnie
 
+    // Remplir d'abord le dictionnaire des artistes et de leurs compagnies
+    data.forEach(d => {
+        const artiste = cleanValue(d.Artiste);
+        const compagnie = cleanValue(d.Compagnie);
+        
+        if (artiste && compagnie !== "/Null/") {
+            artisteToCompagnie[artiste] = compagnie;
+        }
+    });
+
     data.forEach(d => {
         const compagnie = cleanValue(d.Compagnie); // Récupérer le nom de la compagnie
         const artiste = cleanValue(d.Artiste); // Artiste associé
@@ -804,15 +813,11 @@ function fillTopCompagnies(tableId, data, profil) {
 
         if (notes.length === 0) return;
 
-        // Si l'artiste n'a pas encore de compagnie dans le dictionnaire, on l'ajoute
-        if (artiste && compagnie !== "/Null/") {
-            artisteToCompagnie[artiste] = compagnie;
-        }
+        // Si "Compagnie" est /Null/, chercher la compagnie dans l'artiste du groupe
+        let finalCompagnie = compagnie === "/Null/" ? artisteToCompagnie[groupe] || "Sans compagnie" : compagnie;
 
-        // Si "Groupe" est renseigné, on récupère la compagnie de l'artiste du groupe, sinon on prend celle de la ligne
-        const compagnieName = (groupe && groupe.trim() !== "" && groupe !== "Non renseigné" && artisteToCompagnie[groupe])
-            ? artisteToCompagnie[groupe]  // Si un groupe est défini, on prend la compagnie de l'artiste du groupe
-            : (compagnie === "/Null/" ? "Sans compagnie" : compagnie); // Sinon, on garde la compagnie de la ligne
+        // Si le groupe a une compagnie, on prend cette compagnie pour l'artiste, sinon on garde la compagnie de la ligne
+        let compagnieName = (finalCompagnie === "/Null/") ? "Sans compagnie" : finalCompagnie;
 
         let key = compagnieName; // On groupe par compagnie
 
@@ -1152,6 +1157,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
