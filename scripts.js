@@ -803,8 +803,8 @@ function fillTopCompagnies(tableId, data, profil) {
 
         if (notes.length === 0) return;
 
-        // Si un groupe est défini, alors l'artiste appartient à ce groupe, sinon il reste l'artiste seul
-        const finalArtiste = groupe.trim() !== "" ? groupe : artiste;
+        // Si "Groupe" est vide ou "Non renseigné", on prend "Artiste"
+        const finalArtiste = (groupe === "" || groupe === "Non renseigné") ? artiste : groupe;
 
         // Remplacer "/Null" par "Sans compagnie"
         const compagnieName = compagnie === "/Null" ? "Sans compagnie" : compagnie;
@@ -1144,6 +1144,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
