@@ -772,7 +772,6 @@ function fillBottomArtistes(tableId,data,profil){
         tbody.appendChild(tr);
     });
 }
-
 // Table : Compagnies
 function fillTopCompagnies(tableId, data, profil) {
     const table = document.getElementById(tableId);
@@ -803,17 +802,19 @@ function fillTopCompagnies(tableId, data, profil) {
 
         if (notes.length === 0) return;
 
-        // Si "Groupe" est vide ou "Non renseigné", on prend "Artiste"
-        const finalArtiste = (groupe === "" || groupe === "Non renseigné") ? artiste : groupe;
-
-        // Remplacer "/Null" par "Sans compagnie"
-        const compagnieName = compagnie === "/Null/" ? "Sans compagnie" : compagnie;
+        // Si "Groupe" est renseigné, on prend la compagnie de l'artiste, sinon on prend la compagnie de la ligne
+        const compagnieName = (groupe && groupe.trim() !== "" && groupe !== "Non renseigné") 
+            ? artiste // Utiliser l'artiste si "Groupe" est défini
+            : (compagnie === "/Null/" ? "Sans compagnie" : compagnie); // Sinon, on garde la compagnie de la ligne
 
         let key = compagnieName; // On groupe par compagnie
 
         if (!stats[key]) {
             stats[key] = { sum: 0, count: 0, artistes: new Set() };
         }
+
+        // Si "Groupe" est renseigné, on utilise le groupe, sinon l'artiste
+        const finalArtiste = (groupe === "" || groupe === "Non renseigné") ? artiste : groupe;
 
         // Ajoute l'artiste (ou le groupe) à la compagnie pour obtenir la liste des artistes
         stats[key].artistes.add(finalArtiste);
@@ -1144,6 +1145,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
