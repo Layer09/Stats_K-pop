@@ -1121,9 +1121,9 @@ function createTablesForProfile(profil, data){
     }
 
     // Ajouter événement checkbox pour filtrer les compagnies
-    const topCheckboxFil = document.getElementById(`filter_compagnies_${profil}`);
-    if (topCheckboxFil) {
-        topCheckboxFil.onchange = ()=> fillTopCompagnies(`table_compagnie_${profil}`, data, profil, topCheckboxFil.checked);
+    const topCheckboxComp = document.getElementById(`filter_compagnies_${profil}`);
+    if (topCheckboxComp) {
+        topCheckboxComp.onchange = ()=> fillTopCompagnies(`table_compagnie_${profil}`, data, profil, topCheckboxComp.checked);
     }
 }
 
@@ -1140,6 +1140,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
