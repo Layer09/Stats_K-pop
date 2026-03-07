@@ -807,7 +807,7 @@ function fillTopCompagnies(tableId, data, profil) {
         const finalArtiste = (groupe === "" || groupe === "Non renseigné") ? artiste : groupe;
 
         // Remplacer "/Null" par "Sans compagnie"
-        const compagnieName = compagnie === "/Null" ? "Sans compagnie" : compagnie;
+        const compagnieName = compagnie === "/Null/" ? "Sans compagnie" : compagnie;
 
         let key = compagnieName; // On groupe par compagnie
 
@@ -1144,6 +1144,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
