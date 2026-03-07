@@ -790,7 +790,7 @@ function fillTopCompagnies(tableId, data, profil) {
     }
 
     tbody.innerHTML = "";
-    
+
     const minOccur = document.getElementById(`filter_compagnies_${profil}`).checked;
 
     let stats = {};
@@ -798,9 +798,13 @@ function fillTopCompagnies(tableId, data, profil) {
     data.forEach(d => {
         const compagnie = cleanValue(d.Compagnie); // Récupérer le nom de la compagnie
         const artiste = cleanValue(d.Artiste); // Artiste associé
+        const groupe = cleanValue(d.Groupe); // Groupe associé (nouvelle colonne)
         const notes = getNotes(d, profil); // Récupérer les notes selon le profil
 
         if (notes.length === 0) return;
+
+        // Si un groupe est défini, alors l'artiste appartient à ce groupe, sinon il est indépendant
+        const finalArtiste = groupe ? groupe : artiste;
 
         // Remplacer "/Null" par "Sans compagnie"
         const compagnieName = compagnie === "/Null" ? "Sans compagnie" : compagnie;
@@ -811,8 +815,8 @@ function fillTopCompagnies(tableId, data, profil) {
             stats[key] = { sum: 0, count: 0, artistes: new Set() };
         }
 
-        // Ajoute l'artiste à la compagnie pour obtenir la liste des artistes
-        stats[key].artistes.add(artiste);
+        // Ajoute l'artiste (ou le groupe) à la compagnie pour obtenir la liste des artistes
+        stats[key].artistes.add(finalArtiste);
 
         // Ajout des notes
         stats[key].sum += notes.reduce((a, b) => a + b, 0) / notes.length;
@@ -1140,6 +1144,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
