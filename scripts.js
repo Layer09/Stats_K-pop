@@ -421,7 +421,7 @@ function graphRepartitionCompagnie(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
-        const compagnie = cleanValue(d.compagnie); // Récupérer la compagnie
+        const compagnie = cleanValue(d.Compagnie); // Récupérer la compagnie
         if (!counts[compagnie]) counts[compagnie] = 0; // Initialiser si nécessaire
 
         if (profil === "Moyenne") {
@@ -465,7 +465,7 @@ function graphMoyenneParCompagnie(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
-        const compagnie = cleanValue(d.compagnie); // Récupérer la compagnie
+        const compagnie = cleanValue(d.Compagnie); // Récupérer la compagnie
         if (!sums[compagnie]) sums[compagnie] = 0;
         if (!counts[compagnie]) counts[compagnie] = 0;
 
@@ -519,7 +519,7 @@ function graphRepartitionTaille(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
-        const taille = cleanValue(d.taille); // Récupérer la taille
+        const taille = cleanValue(d.Taille); // Récupérer la taille
         if (!counts[taille]) counts[taille] = 0; // Initialiser si nécessaire
 
         if (profil === "Moyenne") {
@@ -563,7 +563,7 @@ function graphMoyenneParTaille(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
-        const taille = cleanValue(d.taille); // Récupérer la taille
+        const taille = cleanValue(d.Taille); // Récupérer la taille
         if (!sums[taille]) sums[taille] = 0;
         if (!counts[taille]) counts[taille] = 0;
 
@@ -1139,6 +1139,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
