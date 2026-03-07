@@ -415,105 +415,6 @@ function graphMoyenneParNumero(ctx, data, profil) {
     });
 }
 
-
-// Pie chart : Nombre de musiques par compagnie
-function graphRepartitionCompagnie(ctx, data, profil) {
-    const counts = {};
-
-    data.forEach(d => {
-        const compagnie = cleanValue(d.Compagnie); // Récupérer la compagnie
-        if (!counts[compagnie]) counts[compagnie] = 0; // Initialiser si nécessaire
-
-        if (profil === "Moyenne") {
-            counts[compagnie] += 1;
-        } else {
-            // compter uniquement si le juré a donné une note
-            const note1 = parseFloat(d[`Note_1_${profil}`]);
-            const note2 = parseFloat(d[`Note_2_${profil}`]);
-            if (!isNaN(note1) || !isNaN(note2)) counts[compagnie] += 1;
-        }
-    });
-
-    // Détruire le chart précédent si nécessaire
-    if (chartInstances[`pie_compagnie_${profil}`]) chartInstances[`pie_compagnie_${profil}`].destroy();
-
-    chartInstances[`pie_compagnie_${profil}`] = new Chart(ctx, {
-        type: 'pie',
-        data: {
-            labels: Object.keys(counts),
-            datasets: [{
-                data: Object.values(counts),
-                backgroundColor: getChartColors(Object.keys(counts).length)
-            }]
-        },
-        options: {
-            responsive: true,
-            animation: {
-                duration: 800,
-                animateRotate: true,
-                animateScale: true
-            },
-            maintainAspectRatio: false,
-            plugins: { legend: { position: 'top' } }
-        }
-    });
-}
-
-// Bar chart : Moyenne des notes par compagnie
-function graphMoyenneParCompagnie(ctx, data, profil) {
-    const sums = {};
-    const counts = {};
-
-    data.forEach(d => {
-        const compagnie = cleanValue(d.Compagnie); // Récupérer la compagnie
-        if (!sums[compagnie]) sums[compagnie] = 0;
-        if (!counts[compagnie]) counts[compagnie] = 0;
-
-        const notes = getNotes(d, profil);
-
-        if (notes.length > 0) {
-            sums[compagnie] += notes.reduce((a, b) => a + b, 0) / notes.length;
-            counts[compagnie] += 1;
-        }
-    });
-
-    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
-
-    // Détruire le chart précédent si nécessaire
-    if (chartInstances[`bar_compagnie_${profil}`]) chartInstances[`bar_compagnie_${profil}`].destroy();
-
-    // Forcer le canvas à recalculer sa taille
-    ctx.canvas.parentNode.style.position = 'relative';
-    ctx.canvas.style.width = '100%';
-    ctx.canvas.style.height = '300px';
-    ctx.canvas.width = ctx.canvas.offsetWidth;
-    ctx.canvas.height = ctx.canvas.offsetHeight;
-
-    chartInstances[`bar_compagnie_${profil}`] = new Chart(ctx, {
-        type: 'bar',
-        data: {
-            labels: Object.keys(sums),
-            datasets: [{
-                label: profil === "Moyenne" ? "Moyenne des notes" : `Moyenne : ${profil}`,
-                data: averages,
-                backgroundColor: getChartColors(Object.keys(counts).length)
-            }]
-        },
-        options: {
-            responsive: true,
-            animation: {
-                duration: 800,
-                easing: 'easeOutCubic',
-                from: 0
-            },
-            maintainAspectRatio: false,
-            plugins: { legend: { display: false } },
-            scales: { y: { beginAtZero: true, max: 10 } }
-        }
-    });
-}
-
-
 // Pie chart : Nombre de musiques par taille
 function graphRepartitionTaille(ctx, data, profil) {
     const counts = {};
@@ -872,6 +773,111 @@ function fillBottomArtistes(tableId,data,profil){
     });
 }
 
+// Table : Compagnies
+function fillTopCompagnies(tableId, data, profil) {
+    const table = document.getElementById(tableId);
+
+    if (!table) {
+        console.warn(`Table ${tableId} introuvable`);
+        return;
+    }
+
+    const tbody = table.querySelector("tbody");
+
+    if (!tbody) {
+        console.warn(`tbody absent pour ${tableId}`);
+        return;
+    }
+
+    tbody.innerHTML = "";
+    
+    const minOccur = document.getElementById(`filter_compagnies_${profil}`).checked;
+
+    let stats = {};
+
+    data.forEach(d => {
+        const compagnie = cleanValue(d.Compagnie); // Récupérer le nom de la compagnie
+        const artiste = cleanValue(d.Artiste); // Artiste associé
+        const notes = getNotes(d, profil); // Récupérer les notes selon le profil
+
+        if (notes.length === 0) return;
+
+        // Remplacer "/Null" par "Sans compagnie"
+        const compagnieName = compagnie === "/Null" ? "Sans compagnie" : compagnie;
+
+        let key = compagnieName; // On groupe par compagnie
+
+        if (!stats[key]) {
+            stats[key] = { sum: 0, count: 0, artistes: new Set() };
+        }
+
+        // Ajoute l'artiste à la compagnie pour obtenir la liste des artistes
+        stats[key].artistes.add(artiste);
+
+        // Ajout des notes
+        stats[key].sum += notes.reduce((a, b) => a + b, 0) / notes.length;
+        stats[key].count++;
+    });
+
+    let entries = Object.entries(stats);
+
+    // Filtrer si nécessaire par nombre d'occurrences
+    if (minOccur) {
+        entries = entries.filter(([k, v]) => v.count >= 5);
+    }
+
+    // Trier par moyenne des notes
+    entries.sort((a, b) => b[1].sum / b[1].count - a[1].sum / a[1].count);
+
+    let rank = 0;
+    let previousNote = null;
+
+    // Afficher toutes les compagnies, pas seulement les 10 meilleures
+    entries.forEach(([name, st], index) => {
+        const avg = st.sum / st.count;
+
+        if (avg !== previousNote) {
+            rank = index + 1;
+            previousNote = avg;
+        }
+
+        const tr = document.createElement("tr");
+
+        // Toutes les lignes ont un fond blanc
+        tr.style.setProperty("--bs-table-bg", "white");
+
+        // Créer la ligne pour le tableau avec les données de la compagnie
+        tr.innerHTML = `
+            <td>${rank}</td>
+            <td>${name}</td>
+            <td>${[...st.artistes].join(', ')}</td>
+            <td>${st.count}</td>
+            <td>${avg.toFixed(2)}</td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
+
+// Fonction pour récupérer les notes spécifiques au profil
+function getNotes(d, profil) {
+    const notes = [];
+    // Récupérer les notes en fonction du profil
+    if (profil === 'Laurana') {
+        if (d['Note_1_Laurana']) notes.push(parseFloat(d['Note_1_Laurana']));
+        if (d['Note_2_Laurana']) notes.push(parseFloat(d['Note_2_Laurana']));
+    } else if (profil === 'Melyssa') {
+        if (d['Note_1_Melyssa']) notes.push(parseFloat(d['Note_1_Melyssa']));
+        if (d['Note_2_Melyssa']) notes.push(parseFloat(d['Note_2_Melyssa']));
+    }
+    // Ajoute d'autres conditions pour d'autres profils si nécessaire
+    return notes;
+}
+
+// Fonction pour nettoyer les valeurs
+function cleanValue(val) {
+    return val && val.trim() ? val : "Non renseigné";
+}
+
 // Table: Top musiques
 function fillTopMusiques(tableId,data,profil){
 
@@ -891,7 +897,7 @@ function fillTopMusiques(tableId,data,profil){
 
     tbody.innerHTML = "";
 
-    const label=document.getElementById(`top_label_note_${profil}`);
+    const label=document.getElementById(`label_note_${profil}`);
     if(label){
         label.innerText = profil==="Moyenne" ? "Note moyenne" : "Note";
     }
@@ -1059,18 +1065,6 @@ function createGraphsForProfile(profil, data) {
         graphMoyenneParNumero(ctxBarNumero.getContext('2d'), data, profil);
     }
 
-    const ctxPieCompagnie = document.getElementById(`graph_compagnie_${profil}`);
-    if (ctxPieCompagnie) {
-        console.log("Création graphique Répartition Compagnie");
-        graphRepartitionCompagnie(ctxPieCompagnie.getContext('2d'), data, profil);
-    }
-
-    const ctxBarCompagnie = document.getElementById(`graph_moyenne_compagnie_${profil}`);
-    if (ctxBarCompagnie) {
-        console.log("Création graphique Moyenne Compagnie");
-        graphMoyenneParCompagnie(ctxBarCompagnie.getContext('2d'), data, profil);
-    }
-
     const ctxPieTaille = document.getElementById(`graph_taille_${profil}`);
     if (ctxPieTaille) {
         console.log("Création graphique Répartition Taille");
@@ -1103,6 +1097,7 @@ function createTablesForProfile(profil, data){
     fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, document.getElementById(`filter_artistes_bottom_${profil}`)?.checked);
     fillTopMusiques(`table_top_chansons_${profil}`, data, profil);
     fillBottomMusiques(`table_bottom_chansons_${profil}`, data, profil);
+    fillTopCompagnies(`table_bottom_compagnie_${profil}`, data, profil, document.getElementById(`filter_compagnies_${profil}`)?.checked);
 
     // Ajouter événements checkbox pour filtrer artistes
     const topCheckboxFil = document.getElementById(`filter_artistes_top_${profil}`);
@@ -1124,6 +1119,12 @@ function createTablesForProfile(profil, data){
     if(bottomCheckboxGrp){
         bottomCheckboxGrp.onchange = ()=> fillBottomArtistes(`table_bottom_artistes_${profil}`, data, profil, bottomCheckboxGrp.checked);
     }
+
+    // Ajouter événement checkbox pour filtrer les compagnies
+    const topCheckboxFil = document.getElementById(`filter_compagnies_${profil}`);
+    if (topCheckboxFil) {
+        topCheckboxFil.onchange = ()=> fillTopCompagnies(`table_compagnie_${profil}`, data, profil, topCheckboxFil.checked);
+    }
 }
 
 // ===============================
@@ -1139,6 +1140,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
