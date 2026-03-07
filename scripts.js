@@ -312,7 +312,7 @@ function graphRepartitionEpisode(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
-        const episode = cleanValue(d.episode); // Récupérer l'épisode
+        const episode = cleanValue(d.Episode); // Récupérer l'épisode
         if (!counts[episode]) counts[episode] = 0; // Initialiser si nécessaire
 
         if (profil === "Moyenne") {
@@ -356,7 +356,7 @@ function graphMoyenneParEpisode(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
-        const episode = cleanValue(d.episode); // Récupérer l'épisode
+        const episode = cleanValue(d.Episode); // Récupérer l'épisode
         if (!sums[episode]) sums[episode] = 0;
         if (!counts[episode]) counts[episode] = 0;
 
@@ -799,6 +799,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
