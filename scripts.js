@@ -816,8 +816,8 @@ function fillTopCompagnies(tableId, data, profil) {
         // Si "Compagnie" est /Null/, chercher la compagnie dans l'artiste du groupe
         let finalCompagnie = compagnie === "/Null/" ? artisteToCompagnie[groupe] || "Sans compagnie" : compagnie;
 
-        // Si le groupe a une compagnie, on prend cette compagnie pour l'artiste, sinon on garde la compagnie de la ligne
-        let compagnieName = (finalCompagnie === "/Null/") ? "Sans compagnie" : finalCompagnie;
+        // Si "Compagnie" est réellement non renseignée ou /Null/, on met "Sans compagnie"
+        let compagnieName = (finalCompagnie === "/Null/" || finalCompagnie === "") ? "Sans compagnie" : finalCompagnie;
 
         let key = compagnieName; // On groupe par compagnie
 
@@ -1157,6 +1157,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
