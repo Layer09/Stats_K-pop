@@ -308,7 +308,7 @@ function graphMoyenneParAnnee(ctx, data, profil) {
 
 
 // Pie chart : Nombre de musiques par épisode
-function graphRepartitionepisode(ctx, data, profil) {
+function graphRepartitionEpisode(ctx, data, profil) {
     const counts = {};
 
     data.forEach(d => {
@@ -351,7 +351,7 @@ function graphRepartitionepisode(ctx, data, profil) {
 }
 
 // Bar chart : Moyenne des notes par épisode
-function graphMoyenneParepisode(ctx, data, profil) {
+function graphMoyenneParEpisode(ctx, data, profil) {
     const sums = {};
     const counts = {};
 
@@ -799,6 +799,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
