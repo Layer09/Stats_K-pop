@@ -416,6 +416,299 @@ function graphMoyenneParNumero(ctx, data, profil) {
 }
 
 
+// Pie chart : Nombre de musiques par compagnie
+function graphRepartitionCompagnie(ctx, data, profil) {
+    const counts = {};
+
+    data.forEach(d => {
+        const compagnie = cleanValue(d.compagnie); // Récupérer la compagnie
+        if (!counts[compagnie]) counts[compagnie] = 0; // Initialiser si nécessaire
+
+        if (profil === "Moyenne") {
+            counts[compagnie] += 1;
+        } else {
+            // compter uniquement si le juré a donné une note
+            const note1 = parseFloat(d[`Note_1_${profil}`]);
+            const note2 = parseFloat(d[`Note_2_${profil}`]);
+            if (!isNaN(note1) || !isNaN(note2)) counts[compagnie] += 1;
+        }
+    });
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`pie_compagnie_${profil}`]) chartInstances[`pie_compagnie_${profil}`].destroy();
+
+    chartInstances[`pie_compagnie_${profil}`] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{
+                data: Object.values(counts),
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                animateRotate: true,
+                animateScale: true
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+}
+
+// Bar chart : Moyenne des notes par compagnie
+function graphMoyenneParCompagnie(ctx, data, profil) {
+    const sums = {};
+    const counts = {};
+
+    data.forEach(d => {
+        const compagnie = cleanValue(d.compagnie); // Récupérer la compagnie
+        if (!sums[compagnie]) sums[compagnie] = 0;
+        if (!counts[compagnie]) counts[compagnie] = 0;
+
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0) {
+            sums[compagnie] += notes.reduce((a, b) => a + b, 0) / notes.length;
+            counts[compagnie] += 1;
+        }
+    });
+
+    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`bar_compagnie_${profil}`]) chartInstances[`bar_compagnie_${profil}`].destroy();
+
+    // Forcer le canvas à recalculer sa taille
+    ctx.canvas.parentNode.style.position = 'relative';
+    ctx.canvas.style.width = '100%';
+    ctx.canvas.style.height = '300px';
+    ctx.canvas.width = ctx.canvas.offsetWidth;
+    ctx.canvas.height = ctx.canvas.offsetHeight;
+
+    chartInstances[`bar_compagnie_${profil}`] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(sums),
+            datasets: [{
+                label: profil === "Moyenne" ? "Moyenne des notes" : `Moyenne : ${profil}`,
+                data: averages,
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic',
+                from: 0
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 10 } }
+        }
+    });
+}
+
+
+// Pie chart : Nombre de musiques par taille
+function graphRepartitionTaille(ctx, data, profil) {
+    const counts = {};
+
+    data.forEach(d => {
+        const taille = cleanValue(d.taille); // Récupérer la taille
+        if (!counts[taille]) counts[taille] = 0; // Initialiser si nécessaire
+
+        if (profil === "Moyenne") {
+            counts[taille] += 1;
+        } else {
+            // compter uniquement si le juré a donné une note
+            const note1 = parseFloat(d[`Note_1_${profil}`]);
+            const note2 = parseFloat(d[`Note_2_${profil}`]);
+            if (!isNaN(note1) || !isNaN(note2)) counts[taille] += 1;
+        }
+    });
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`pie_taille_${profil}`]) chartInstances[`pie_taille_${profil}`].destroy();
+
+    chartInstances[`pie_taille_${profil}`] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{
+                data: Object.values(counts),
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                animateRotate: true,
+                animateScale: true
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+}
+
+// Bar chart : Moyenne des notes par taille
+function graphMoyenneParTaille(ctx, data, profil) {
+    const sums = {};
+    const counts = {};
+
+    data.forEach(d => {
+        const taille = cleanValue(d.taille); // Récupérer la taille
+        if (!sums[taille]) sums[taille] = 0;
+        if (!counts[taille]) counts[taille] = 0;
+
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0) {
+            sums[taille] += notes.reduce((a, b) => a + b, 0) / notes.length;
+            counts[taille] += 1;
+        }
+    });
+
+    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`bar_taille_${profil}`]) chartInstances[`bar_taille_${profil}`].destroy();
+
+    // Forcer le canvas à recalculer sa taille
+    ctx.canvas.parentNode.style.position = 'relative';
+    ctx.canvas.style.width = '100%';
+    ctx.canvas.style.height = '300px';
+    ctx.canvas.width = ctx.canvas.offsetWidth;
+    ctx.canvas.height = ctx.canvas.offsetHeight;
+
+    chartInstances[`bar_taille_${profil}`] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(sums),
+            datasets: [{
+                label: profil === "Moyenne" ? "Moyenne des notes" : `Moyenne : ${profil}`,
+                data: averages,
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic',
+                from: 0
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 10 } }
+        }
+    });
+}
+
+
+// Pie chart : Nombre de musiques par Génération
+function graphRepartitionGeneration(ctx, data, profil) {
+    const counts = {};
+
+    data.forEach(d => {
+        const Generation = cleanValue(d.Generation); // Récupérer l'Génération
+        if (!counts[Generation]) counts[Generation] = 0; // Initialiser si nécessaire
+
+        if (profil === "Moyenne") {
+            counts[Generation] += 1;
+        } else {
+            // compter uniquement si le juré a donné une note
+            const note1 = parseFloat(d[`Note_1_${profil}`]);
+            const note2 = parseFloat(d[`Note_2_${profil}`]);
+            if (!isNaN(note1) || !isNaN(note2)) counts[Generation] += 1;
+        }
+    });
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`pie_Generation_${profil}`]) chartInstances[`pie_Generation_${profil}`].destroy();
+
+    chartInstances[`pie_Generation_${profil}`] = new Chart(ctx, {
+        type: 'pie',
+        data: {
+            labels: Object.keys(counts),
+            datasets: [{
+                data: Object.values(counts),
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                animateRotate: true,
+                animateScale: true
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { position: 'top' } }
+        }
+    });
+}
+
+// Bar chart : Moyenne des notes par Génération
+function graphMoyenneParGeneration(ctx, data, profil) {
+    const sums = {};
+    const counts = {};
+
+    data.forEach(d => {
+        const Generation = cleanValue(d.Generation); // Récupérer l'Génération
+        if (!sums[Generation]) sums[Generation] = 0;
+        if (!counts[Generation]) counts[Generation] = 0;
+
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0) {
+            sums[Generation] += notes.reduce((a, b) => a + b, 0) / notes.length;
+            counts[Generation] += 1;
+        }
+    });
+
+    const averages = Object.keys(sums).map(k => counts[k] > 0 ? sums[k] / counts[k] : 0);
+
+    // Détruire le chart précédent si nécessaire
+    if (chartInstances[`bar_Generation_${profil}`]) chartInstances[`bar_Generation_${profil}`].destroy();
+
+    // Forcer le canvas à recalculer sa taille
+    ctx.canvas.parentNode.style.position = 'relative';
+    ctx.canvas.style.width = '100%';
+    ctx.canvas.style.height = '300px';
+    ctx.canvas.width = ctx.canvas.offsetWidth;
+    ctx.canvas.height = ctx.canvas.offsetHeight;
+
+    chartInstances[`bar_Generation_${profil}`] = new Chart(ctx, {
+        type: 'bar',
+        data: {
+            labels: Object.keys(sums),
+            datasets: [{
+                label: profil === "Moyenne" ? "Moyenne des notes" : `Moyenne : ${profil}`,
+                data: averages,
+                backgroundColor: getChartColors(Object.keys(counts).length)
+            }]
+        },
+        options: {
+            responsive: true,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic',
+                from: 0
+            },
+            maintainAspectRatio: false,
+            plugins: { legend: { display: false } },
+            scales: { y: { beginAtZero: true, max: 10 } }
+        }
+    });
+}
+
 // Table : Top artistes
 function fillTopArtistes(tableId,data,profil){
 
@@ -766,6 +1059,42 @@ function createGraphsForProfile(profil, data) {
         graphMoyenneParNumero(ctxBarNumero.getContext('2d'), data, profil);
     }
 
+    const ctxPieCompagnie = document.getElementById(`graph_compagnie_${profil}`);
+    if (ctxPieCompagnie) {
+        console.log("Création graphique Répartition Compagnie");
+        graphRepartitionCompagnie(ctxPieCompagnie.getContext('2d'), data, profil);
+    }
+
+    const ctxBarCompagnie = document.getElementById(`graph_moyenne_compagnie_${profil}`);
+    if (ctxBarCompagnie) {
+        console.log("Création graphique Moyenne Compagnie");
+        graphMoyenneParCompagnie(ctxBarCompagnie.getContext('2d'), data, profil);
+    }
+
+    const ctxPieTaille = document.getElementById(`graph_taille_${profil}`);
+    if (ctxPieTaille) {
+        console.log("Création graphique Répartition Taille");
+        graphRepartitionTaille(ctxPieTaille.getContext('2d'), data, profil);
+    }
+
+    const ctxBarTaille = document.getElementById(`graph_moyenne_taille_${profil}`);
+    if (ctxBarTaille) {
+        console.log("Création graphique Moyenne Taille");
+        graphMoyenneParTaille(ctxBarTaille.getContext('2d'), data, profil);
+    }
+    
+    const ctxPieGeneration = document.getElementById(`graph_generation_${profil}`);
+    if (ctxPieGeneration) {
+        console.log("Création graphique Répartition Generation");
+        graphRepartitionGeneration(ctxPieGeneration.getContext('2d'), data, profil);
+    }
+
+    const ctxBarGeneration = document.getElementById(`graph_moyenne_generation_${profil}`);
+    if (ctxBarGeneration) {
+        console.log("Création graphique Moyenne Generation");
+        graphMoyenneParGeneration(ctxBarGeneration.getContext('2d'), data, profil);
+    }
+
     // Ajouter la suite de X ici pour les autres graphes...
 }
 
@@ -810,6 +1139,7 @@ window.onload = function() {
         console.error("Erreur lors du chargement du CSV :", error);
     });
 };
+
 
 
 
