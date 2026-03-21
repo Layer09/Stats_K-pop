@@ -935,7 +935,7 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 },
                 y: {
                     ticks: {
-                        stepSize: 1,
+                        stepSize: 0.01,
                         callback: v => `Ep${v}`
                     }
                 }
