@@ -743,55 +743,116 @@ function graphMoyenneParSexeEtTaille(ctx, data, profil) {
     });
 }
 
+const heatmapLabelsPlugin = {
+    id: 'heatmapLabels',
+
+    afterDatasetsDraw(chart) {
+        const { ctx } = chart;
+        const dataset = chart.data.datasets[0];
+        const meta = chart.getDatasetMeta(0);
+
+        ctx.save();
+        ctx.font = "10px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        // 🔢 Valeurs dans chaque case
+        meta.data.forEach((rect, i) => {
+            const value = dataset.data[i].v;
+            if (value > 0) {
+                ctx.fillStyle = "black";
+                ctx.fillText(value, rect.x, rect.y);
+            }
+        });
+
+        // 🔝 Sommes des colonnes
+        const sums = chart.config._columnSums;
+        const xScale = chart.scales.x;
+
+        ctx.textBaseline = "bottom";
+        ctx.fillStyle = "black";
+
+        xScale.ticks.forEach((tick, i) => {
+            const x = xScale.getPixelForTick(i);
+            const year = tick.label;
+
+            ctx.fillText(
+                sums[year],
+                x,
+                chart.chartArea.top - 5
+            );
+        });
+
+        ctx.restore();
+    }
+};
+
+function getGradientColor(value, max) {
+    if (value === 0) return "#00008B";
+
+    const ratio = value / max;
+
+    const colors = [
+        [0, 0, 139],    // bleu foncé
+        [0, 0, 255],    // bleu
+        [0, 255, 255],  // cyan
+        [0, 128, 0],    // vert
+        [255, 255, 0],  // jaune
+        [255, 165, 0],  // orange
+        [139, 0, 0]     // rouge foncé
+    ];
+
+    const step = (colors.length - 1) * ratio;
+    const i = Math.floor(step);
+    const t = step - i;
+
+    if (i >= colors.length - 1) return `rgb(${colors.at(-1).join(",")})`;
+
+    const c1 = colors[i];
+    const c2 = colors[i + 1];
+
+    const r = Math.round(c1[0] + (c2[0] - c1[0]) * t);
+    const g = Math.round(c1[1] + (c2[1] - c1[1]) * t);
+    const b = Math.round(c1[2] + (c2[2] - c1[2]) * t);
+
+    return `rgb(${r},${g},${b})`;
+}
+
 function graphHeatmapEpisodesAnnees(ctx, data) {
 
-    // -----------------------------
-    // 1. Récupération min/max
-    // -----------------------------
-    const episodes = [...new Set(data.map(d => +d.Episode))];
-    const anneesData = data.map(d => +d.Annee);
+    const episodes = [...new Set(data.map(d => parseInt(d.Episode)))].filter(x => !isNaN(x));
+    const anneesData = data.map(d => parseInt(d.Annee)).filter(x => !isNaN(x));
 
     const minYear = Math.min(...anneesData);
     const maxYear = Math.max(...anneesData);
 
-    // Toutes les années même vides
     const annees = [];
-    for (let y = minYear; y <= maxYear; y++) {
-        annees.push(y);
-    }
+    for (let y = minYear; y <= maxYear; y++) annees.push(y);
 
     const maxEpisode = Math.max(...episodes);
 
-    // -----------------------------
-    // 2. Initialisation matrice
-    // -----------------------------
     const matrix = {};
-
     for (let ep = 1; ep <= maxEpisode; ep++) {
         matrix[ep] = {};
         annees.forEach(a => matrix[ep][a] = 0);
     }
 
-    // -----------------------------
-    // 3. Remplissage
-    // -----------------------------
+    // Remplissage sécurisé
     data.forEach(d => {
         const ep = parseInt(d.Episode);
         const an = parseInt(d.Annee);
-    
+
         if (
             !isNaN(ep) &&
             !isNaN(an) &&
-            matrix[ep] !== undefined &&
+            matrix[ep] &&
             matrix[ep][an] !== undefined
         ) {
             matrix[ep][an]++;
         }
     });
 
-    // -----------------------------
-    // 4. Sommes colonnes
-    // -----------------------------
+    // Sommes colonnes
     const columnSums = {};
     annees.forEach(a => {
         columnSums[a] = 0;
@@ -800,39 +861,16 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         }
     });
 
-    // -----------------------------
-    // 5. Max valeur (pour couleurs)
-    // -----------------------------
+    // Max valeur
     let maxValue = 0;
     for (let ep = 1; ep <= maxEpisode; ep++) {
         for (let a of annees) {
-            if (matrix[ep][a] > maxValue) {
-                maxValue = matrix[ep][a];
-            }
+            maxValue = Math.max(maxValue, matrix[ep][a]);
         }
     }
 
-    // -----------------------------
-    // 6. Fonction couleur (gradient)
-    // -----------------------------
-    function getColor(value) {
-        if (value === 0) return "#00008B"; // bleu foncé
-
-        const ratio = value / maxValue;
-
-        if (ratio < 0.2) return "#0000FF";     // bleu
-        if (ratio < 0.4) return "#00CED1";     // cyan
-        if (ratio < 0.6) return "#32CD32";     // vert
-        if (ratio < 0.75) return "#FFD700";    // jaune
-        if (ratio < 0.9) return "#FF8C00";     // orange
-        return "#8B0000";                      // rouge foncé
-    }
-
-    // -----------------------------
-    // 7. Format dataset
-    // -----------------------------
+    // Dataset
     const dataset = [];
-
     for (let ep = 1; ep <= maxEpisode; ep++) {
         for (let a of annees) {
             dataset.push({
@@ -843,71 +881,63 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         }
     }
 
-    // -----------------------------
-    // 8. Destroy ancien chart
-    // -----------------------------
     if (chartInstances["heatmap"]) {
         chartInstances["heatmap"].destroy();
     }
 
-    // -----------------------------
-    // 9. Création chart
-    // -----------------------------
     chartInstances["heatmap"] = new Chart(ctx, {
         type: 'matrix',
         data: {
             datasets: [{
-                label: 'Heatmap',
                 data: dataset,
-                backgroundColor: ctx => getColor(ctx.raw.v),
-                width: ({chart}) => (chart.chartArea || {}).width / annees.length - 1,
-                height: ({chart}) => (chart.chartArea || {}).height / maxEpisode - 1
+                backgroundColor: ctx => getGradientColor(ctx.raw.v, maxValue),
+
+                // 🔲 CASES CARRÉES
+                width: ({chart}) => {
+                    const area = chart.chartArea;
+                    return Math.min(
+                        area.width / annees.length,
+                        area.height / maxEpisode
+                    ) - 2;
+                },
+                height: ({chart}) => {
+                    const area = chart.chartArea;
+                    return Math.min(
+                        area.width / annees.length,
+                        area.height / maxEpisode
+                    ) - 2;
+                }
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: { display: false },
-
-                tooltip: {
-                    callbacks: {
-                        title: () => '',
-                        label: ctx =>
-                            `Ep ${ctx.raw.y} / ${ctx.raw.x} : ${ctx.raw.v}`
-                    }
+            layout: {
+                padding: {
+                    top: 30 // espace pour les sommes
                 }
             },
-
+            plugins: {
+                legend: { display: false }
+            },
             scales: {
                 x: {
                     type: 'category',
-                    labels: annees,
-                    ticks: {
-                        callback: function(value) {
-                            const year = this.getLabelForValue(value);
-                            return `${year}\n(${columnSums[year]})`;
-                        }
-                    },
-                    title: {
-                        display: true,
-                        text: 'Années'
-                    }
+                    labels: annees
                 },
                 y: {
-                    type: 'linear',
                     ticks: {
                         stepSize: 1,
                         callback: v => `Ep${v}`
-                    },
-                    title: {
-                        display: true,
-                        text: 'Épisodes'
                     }
                 }
             }
-        }
+        },
+        plugins: [heatmapLabelsPlugin]
     });
+
+    // 👉 on stocke les sommes pour le plugin
+    chartInstances["heatmap"].config._columnSums = columnSums;
 }
 
 // Table : Top artistes
