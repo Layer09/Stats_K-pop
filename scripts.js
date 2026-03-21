@@ -776,10 +776,15 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
     // 3. Remplissage
     // -----------------------------
     data.forEach(d => {
-        const ep = +d.Episode;
-        const an = +d.Annee;
-
-        if (!isNaN(ep) && !isNaN(an)) {
+        const ep = parseInt(d.Episode);
+        const an = parseInt(d.Annee);
+    
+        if (
+            !isNaN(ep) &&
+            !isNaN(an) &&
+            matrix[ep] !== undefined &&
+            matrix[ep][an] !== undefined
+        ) {
             matrix[ep][an]++;
         }
     });
