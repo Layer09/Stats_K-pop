@@ -742,7 +742,6 @@ function graphMoyenneParSexeEtTaille(ctx, data, profil) {
         }
     });
 }
-
 // ================= PLUGIN =================
 const heatmapLabelsPlugin = {
     id: 'heatmapLabels',
@@ -768,12 +767,8 @@ const heatmapLabelsPlugin = {
 
             if (!rect || value === 0) return;
 
-            const { x, y } = rect;
-
-            // contraste auto
             ctx.fillStyle = value > chart._maxValue * 0.5 ? "white" : "black";
-
-            ctx.fillText(value, x, y);
+            ctx.fillText(value, rect.x, rect.y);
         });
 
         // 🔝 SOMMES DES COLONNES
@@ -786,11 +781,7 @@ const heatmapLabelsPlugin = {
 
             const value = sums[year] ?? 0;
 
-            ctx.fillText(
-                value,
-                x,
-                chart.chartArea.top - 5
-            );
+            ctx.fillText(value, x, chart.chartArea.top - 5);
         });
 
         ctx.restore();
@@ -805,21 +796,25 @@ function getGradientColor(value, max) {
 
     const ratio = value / max;
 
-    // 🔥 beaucoup plus de couleurs pour un dégradé smooth
     const colors = [
-        [0, 0, 139],     // bleu très foncé
-        [0, 0, 255],     // bleu
-        [0, 128, 255],   // bleu clair
-        [0, 255, 255],   // cyan
-        [0, 200, 150],   // turquoise
-        [0, 128, 0],     // vert
-        [100, 200, 0],   // vert clair
-        [255, 255, 0],   // jaune
-        [255, 200, 0],   // jaune-orange
-        [255, 140, 0],   // orange
-        [255, 80, 0],    // orange foncé
-        [200, 0, 0],     // rouge
-        [139, 0, 0]      // rouge foncé
+        [0, 0, 139],
+        [0, 0, 255],
+        [0, 100, 255],
+        [0, 180, 255],
+        [0, 255, 255],
+        [0, 220, 180],
+        [0, 180, 100],
+        [0, 128, 0],
+        [120, 200, 0],
+        [200, 230, 0],
+        [255, 255, 0],
+        [255, 210, 0],
+        [255, 170, 0],
+        [255, 120, 0],
+        [255, 70, 0],
+        [220, 30, 0],
+        [180, 0, 0],
+        [139, 0, 0]
     ];
 
     const step = (colors.length - 1) * ratio;
@@ -912,28 +907,18 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 data: dataset,
                 backgroundColor: ctx => getGradientColor(ctx.raw.v, maxValue),
 
-                // 🔲 CASES COLLÉES ET CARRÉES
+                // 🔥 REMPLISSAGE MAX (plus de trous horizontaux)
                 width: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
 
-                    const size = Math.min(
-                        area.width / annees.length,
-                        area.height / maxEpisode
-                    );
-
-                    return size - 0.5;
+                    return (area.width / annees.length) - 1;
                 },
                 height: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
 
-                    const size = Math.min(
-                        area.width / annees.length,
-                        area.height / maxEpisode
-                    );
-
-                    return size - 0.5;
+                    return (area.height / maxEpisode) - 1;
                 }
             }]
         },
@@ -949,7 +934,6 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
 
             plugins: {
                 legend: { display: false },
-
                 heatmapLabels: {
                     columnSums: columnSums
                 }
@@ -961,8 +945,9 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                     labels: annees
                 },
                 y: {
+                    type: 'category',
+                    labels: Array.from({length: maxEpisode}, (_, i) => i + 1),
                     ticks: {
-                        stepSize: 1,
                         callback: v => `Ep${v}`
                     }
                 }
@@ -971,7 +956,6 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         plugins: [heatmapLabelsPlugin]
     });
 
-    // stock pour contraste texte
     chart._maxValue = maxValue;
 }
 
