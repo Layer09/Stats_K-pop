@@ -743,8 +743,6 @@ function graphMoyenneParSexeEtTaille(ctx, data, profil) {
     });
 }
 
-
-
 // ================= PLUGIN =================
 const heatmapLabelsPlugin = {
     id: 'heatmapLabels',
@@ -763,18 +761,16 @@ const heatmapLabelsPlugin = {
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        // 🔢 VALEURS CENTRÉES
+        // 🔢 TEXTE PARFAITEMENT CENTRÉ
         meta.data.forEach((rect, i) => {
             const value = dataset.data[i].v;
             if (!rect || value === 0) return;
 
-            ctx.fillStyle = value > chart._maxValue * 0.5 ? "white" : "black";
+            const centerX = rect.x;
+            const centerY = rect.y;
 
-            ctx.fillText(
-                value,
-                rect.x,
-                rect.y
-            );
+            ctx.fillStyle = value > chart._maxValue * 0.5 ? "white" : "black";
+            ctx.fillText(value, centerX, centerY);
         });
 
         // 🔽 SOMMES EN BAS
@@ -787,11 +783,7 @@ const heatmapLabelsPlugin = {
 
             const value = sums[year] ?? 0;
 
-            ctx.fillText(
-                value,
-                x,
-                chart.chartArea.bottom + 5
-            );
+            ctx.fillText(value, x, chart.chartArea.bottom + 5);
         });
 
         ctx.restore();
@@ -906,7 +898,7 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         }
     }
 
-    // Destroy propre
+    // Destroy
     const existingChart = Chart.getChart(ctx.canvas);
     if (existingChart) existingChart.destroy();
 
@@ -917,28 +909,18 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 data: dataset,
                 backgroundColor: ctx => getGradientColor(ctx.raw.v, maxValue),
 
-                // 🔲 CASES CARRÉES
+                // 🔥 PLUS AUCUN ESPACE ENTRE LES CASES
                 width: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
 
-                    const size = Math.min(
-                        area.width / annees.length,
-                        area.height / maxEpisode
-                    );
-
-                    return size;
+                    return area.width / annees.length;
                 },
                 height: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
 
-                    const size = Math.min(
-                        area.width / annees.length,
-                        area.height / maxEpisode
-                    );
-
-                    return size;
+                    return area.height / maxEpisode;
                 }
             }]
         },
@@ -963,16 +945,15 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
             scales: {
                 x: {
                     type: 'category',
-                    position: 'top', // 🔝 années en haut
-                    labels: annees
+                    position: 'top',
+                    labels: annees,
+                    offset: false // 🔥 SUPPRIME LES ESPACES ENTRE COLONNES
                 },
                 y: {
                     type: 'category',
-                    reverse: true, // 🔥 épisode 1 en haut
+                    reverse: true,
                     labels: Array.from({length: maxEpisode}, (_, i) => i + 1),
-                    ticks: {
-                        callback: v => `Ep${v}`
-                    }
+                    offset: false // 🔥 SUPPRIME ESPACES VERTICAUX
                 }
             }
         },
