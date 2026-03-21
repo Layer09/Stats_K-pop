@@ -743,6 +743,7 @@ function graphMoyenneParSexeEtTaille(ctx, data, profil) {
     });
 }
 
+// ================= PLUGIN =================
 const heatmapLabelsPlugin = {
     id: 'heatmapLabels',
 
@@ -751,24 +752,31 @@ const heatmapLabelsPlugin = {
         const dataset = chart.data.datasets[0];
         const meta = chart.getDatasetMeta(0);
 
+        const sums = chart.options.plugins.heatmapLabels?.columnSums || {};
+        const xScale = chart.scales.x;
+
         ctx.save();
-        ctx.font = "10px Arial";
+
+        // 🔤 STYLE TEXTE
+        ctx.font = "bold 11px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        // 🔢 Valeurs dans chaque case
+        // 🔢 VALEURS DANS LES CASES
         meta.data.forEach((rect, i) => {
             const value = dataset.data[i].v;
-            if (value > 0) {
-                ctx.fillStyle = "black";
-                ctx.fillText(value, rect.x, rect.y);
-            }
+
+            if (!rect || value === 0) return;
+
+            const { x, y } = rect;
+
+            // contraste auto
+            ctx.fillStyle = value > chart._maxValue * 0.5 ? "white" : "black";
+
+            ctx.fillText(value, x, y);
         });
 
-        // 🔝 Sommes des colonnes
-        const sums = chart.config._columnSums || {};
-        const xScale = chart.scales.x;
-
+        // 🔝 SOMMES DES COLONNES
         ctx.textBaseline = "bottom";
         ctx.fillStyle = "black";
 
@@ -777,7 +785,7 @@ const heatmapLabelsPlugin = {
             const year = tick.label;
 
             const value = sums[year] ?? 0;
-            
+
             ctx.fillText(
                 value,
                 x,
@@ -789,26 +797,38 @@ const heatmapLabelsPlugin = {
     }
 };
 
+
+
+// ================= COULEUR (DÉGRADÉ RICHE) =================
 function getGradientColor(value, max) {
     if (value === 0) return "#00008B";
 
     const ratio = value / max;
 
+    // 🔥 beaucoup plus de couleurs pour un dégradé smooth
     const colors = [
-        [0, 0, 139],    // bleu foncé
-        [0, 0, 255],    // bleu
-        [0, 255, 255],  // cyan
-        [0, 128, 0],    // vert
-        [255, 255, 0],  // jaune
-        [255, 165, 0],  // orange
-        [139, 0, 0]     // rouge foncé
+        [0, 0, 139],     // bleu très foncé
+        [0, 0, 255],     // bleu
+        [0, 128, 255],   // bleu clair
+        [0, 255, 255],   // cyan
+        [0, 200, 150],   // turquoise
+        [0, 128, 0],     // vert
+        [100, 200, 0],   // vert clair
+        [255, 255, 0],   // jaune
+        [255, 200, 0],   // jaune-orange
+        [255, 140, 0],   // orange
+        [255, 80, 0],    // orange foncé
+        [200, 0, 0],     // rouge
+        [139, 0, 0]      // rouge foncé
     ];
 
     const step = (colors.length - 1) * ratio;
     const i = Math.floor(step);
     const t = step - i;
 
-    if (i >= colors.length - 1) return `rgb(${colors.at(-1).join(",")})`;
+    if (i >= colors.length - 1) {
+        return `rgb(${colors.at(-1).join(",")})`;
+    }
 
     const c1 = colors[i];
     const c2 = colors[i + 1];
@@ -820,6 +840,9 @@ function getGradientColor(value, max) {
     return `rgb(${r},${g},${b})`;
 }
 
+
+
+// ================= HEATMAP =================
 function graphHeatmapEpisodesAnnees(ctx, data) {
 
     const episodes = [...new Set(data.map(d => parseInt(d.Episode)))].filter(x => !isNaN(x));
@@ -839,17 +862,12 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         annees.forEach(a => matrix[ep][a] = 0);
     }
 
-    // Remplissage sécurisé
+    // Remplissage
     data.forEach(d => {
         const ep = parseInt(d.Episode);
         const an = parseInt(d.Annee);
 
-        if (
-            !isNaN(ep) &&
-            !isNaN(an) &&
-            matrix[ep] &&
-            matrix[ep][an] !== undefined
-        ) {
+        if (!isNaN(ep) && !isNaN(an) && matrix[ep] && matrix[ep][an] !== undefined) {
             matrix[ep][an]++;
         }
     });
@@ -883,51 +901,60 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         }
     }
 
+    // Destroy propre
     const existingChart = Chart.getChart(ctx.canvas);
-    
-    if (existingChart) {
-        existingChart.destroy();
-    }
+    if (existingChart) existingChart.destroy();
 
-    chartInstances["heatmap"] = new Chart(ctx, {
+    const chart = new Chart(ctx, {
         type: 'matrix',
         data: {
             datasets: [{
                 data: dataset,
                 backgroundColor: ctx => getGradientColor(ctx.raw.v, maxValue),
 
-                // 🔲 CASES CARRÉES
+                // 🔲 CASES COLLÉES ET CARRÉES
                 width: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
-                
-                    return Math.min(
+
+                    const size = Math.min(
                         area.width / annees.length,
                         area.height / maxEpisode
-                    ) - 2;
+                    );
+
+                    return size - 0.5;
                 },
                 height: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
-                
-                    return Math.min(
+
+                    const size = Math.min(
                         area.width / annees.length,
                         area.height / maxEpisode
-                    ) - 2;
+                    );
+
+                    return size - 0.5;
                 }
             }]
         },
         options: {
             responsive: true,
             maintainAspectRatio: false,
+
             layout: {
                 padding: {
-                    top: 30 // espace pour les sommes
+                    top: 40
                 }
             },
+
             plugins: {
-                legend: { display: false }
+                legend: { display: false },
+
+                heatmapLabels: {
+                    columnSums: columnSums
+                }
             },
+
             scales: {
                 x: {
                     type: 'category',
@@ -935,7 +962,7 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 },
                 y: {
                     ticks: {
-                        stepSize: 0.01,
+                        stepSize: 1,
                         callback: v => `Ep${v}`
                     }
                 }
@@ -944,8 +971,8 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         plugins: [heatmapLabelsPlugin]
     });
 
-    // 👉 on stocke les sommes pour le plugin
-    chartInstances["heatmap"].config._columnSums = columnSums;
+    // stock pour contraste texte
+    chart._maxValue = maxValue;
 }
 
 // Table : Top artistes
