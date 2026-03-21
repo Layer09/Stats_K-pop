@@ -881,8 +881,10 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
         }
     }
 
-    if (chartInstances["heatmap"]) {
-        chartInstances["heatmap"].destroy();
+    const existingChart = Chart.getChart(ctx.canvas);
+    
+    if (existingChart) {
+        existingChart.destroy();
     }
 
     chartInstances["heatmap"] = new Chart(ctx, {
@@ -895,6 +897,8 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 // 🔲 CASES CARRÉES
                 width: ({chart}) => {
                     const area = chart.chartArea;
+                    if (!area) return 10;
+                
                     return Math.min(
                         area.width / annees.length,
                         area.height / maxEpisode
@@ -902,6 +906,8 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 },
                 height: ({chart}) => {
                     const area = chart.chartArea;
+                    if (!area) return 10;
+                
                     return Math.min(
                         area.width / annees.length,
                         area.height / maxEpisode
