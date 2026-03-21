@@ -95,10 +95,10 @@
     <div class="container-fluid justify-content-center gap-2 flex-wrap">
         <button class="btn btn-info" onclick="showPage('Laurana')">Laurana</button>
         <button class="btn btn-warning" onclick="showPage('Andy')">Andy</button>
-        <button class="btn bg-rose" onclick="showPage('Sarah')">Sarah</button>
-        <button class="btn bg-green --bs-body-color=bg-green" onclick="showPage('Anna')">Anna</button>
+        <button class="btn bg-red" onclick="showPage('Sarah')">Sarah</button>
+        <button class="btn bg-green" onclick="showPage('Anna')">Anna</button>
         <button class="btn bg-purple" onclick="showPage('Melyssa')">Melyssa</button>
-        <button class="btn bg-red" onclick="showPage('Gwenola')">Gwenola</button>
+        <button class="btn bg-rose" onclick="showPage('Gwenola')">Gwenola</button>
         <button class="btn bg-white" onclick="showPage('Moyenne')"><b>Moyenne</b></button>
     </div>
 </nav>
@@ -380,6 +380,30 @@
                 </div>
                 <div class="card-body fixed-card-body d-flex align-items-center">
                     <canvas id="graph_moyenne_taille_Laurana"></canvas>
+                </div>
+            </div>
+        </div>
+        
+        <!-- ================= Sexe + Années ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <b>Moyenne des notes des sexes par années</b>
+                </div>
+                <div class="card-body fixed-card-body d-flex align-items-center">
+                    <canvas id="graph_moyenne_sexe_annee_Laurana"></canvas>
+                </div>
+            </div>
+        </div>
+
+        <!-- ================= Sexe + Taille ================= -->
+        <div class="col-12 col-lg-6">
+            <div class="card shadow-sm h-100">
+                <div class="card-header bg-primary text-white">
+                    <b>Moyenne des notes des sexes par taille</b>
+                </div>
+                <div class="card-body fixed-card-body d-flex align-items-center">
+                    <canvas id="graph_moyenne_sexe_taille_Laurana"></canvas>
                 </div>
             </div>
         </div>
