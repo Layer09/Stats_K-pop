@@ -766,7 +766,7 @@ const heatmapLabelsPlugin = {
         });
 
         // 🔝 Sommes des colonnes
-        const sums = chart.config._columnSums;
+        const sums = chart.config._columnSums || {};
         const xScale = chart.scales.x;
 
         ctx.textBaseline = "bottom";
