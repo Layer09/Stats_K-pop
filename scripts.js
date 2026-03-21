@@ -81,7 +81,7 @@ function getNotes(d, profil){
     }
 
     let notes=[];
-    const jures=["Laurana","Andy","Anna","Gwenola","Melyssa"];
+    const jures=["Laurana","Andy","Anna","Gwenola","Melyssa", "Sarah"];
 
     if(profil==="Moyenne"){
 
@@ -609,6 +609,140 @@ function graphMoyenneParGeneration(ctx, data, profil) {
     });
 }
 
+function graphMoyenneParSexeEtAnnee(ctx, data, profil) {
+
+    const sexes = ["Fille", "Gars", "Mixte", "Non renseigné"];
+
+    // Récupérer toutes les années uniques
+    const annees = [...new Set(data.map(d => cleanValue(d.Annee)))].sort();
+
+    // Initialisation
+    const sums = {};
+    const counts = {};
+
+    sexes.forEach(sexe => {
+        sums[sexe] = {};
+        counts[sexe] = {};
+        annees.forEach(a => {
+            sums[sexe][a] = 0;
+            counts[sexe][a] = 0;
+        });
+    });
+
+    // Remplissage
+    data.forEach(d => {
+        const sexe = cleanValue(d.Sexe);
+        const annee = cleanValue(d.Annee);
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0 && sexes.includes(sexe) && annees.includes(annee)) {
+            const moyenne = notes.reduce((a, b) => a + b, 0) / notes.length;
+            sums[sexe][annee] += moyenne;
+            counts[sexe][annee] += 1;
+        }
+    });
+
+    // Calcul des moyennes
+    const datasets = sexes.map(sexe => ({
+        label: sexe,
+        data: annees.map(a =>
+            counts[sexe][a] > 0 ? sums[sexe][a] / counts[sexe][a] : null
+        ),
+        borderColor: getSexeColor(sexe),
+        backgroundColor: getSexeColor(sexe),
+        tension: 0.3,
+        fill: false
+    }));
+
+    // Destroy ancien chart
+    if (chartInstances[`line_sexe_annee_${profil}`]) {
+        chartInstances[`line_sexe_annee_${profil}`].destroy();
+    }
+
+    chartInstances[`line_sexe_annee_${profil}`] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: annees,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic'
+            },
+            scales: {
+                y: { beginAtZero: true, max: 10 }
+            }
+        }
+    });
+}
+
+function graphMoyenneParSexeEtTaille(ctx, data, profil) {
+
+    const sexes = ["Fille", "Gars", "Mixte", "Non renseigné"];
+    const tailles = ["Solo", "Duo", "Groupe", "Non renseigné"];
+
+    const sums = {};
+    const counts = {};
+
+    sexes.forEach(sexe => {
+        sums[sexe] = {};
+        counts[sexe] = {};
+        tailles.forEach(t => {
+            sums[sexe][t] = 0;
+            counts[sexe][t] = 0;
+        });
+    });
+
+    data.forEach(d => {
+        const sexe = cleanValue(d.Sexe);
+        const taille = cleanValue(d.Taille);
+        const notes = getNotes(d, profil);
+
+        if (notes.length > 0 && sexes.includes(sexe) && tailles.includes(taille)) {
+            const moyenne = notes.reduce((a, b) => a + b, 0) / notes.length;
+            sums[sexe][taille] += moyenne;
+            counts[sexe][taille] += 1;
+        }
+    });
+
+    const datasets = sexes.map(sexe => ({
+        label: sexe,
+        data: tailles.map(t =>
+            counts[sexe][t] > 0 ? sums[sexe][t] / counts[sexe][t] : null
+        ),
+        borderColor: getSexeColor(sexe),
+        backgroundColor: getSexeColor(sexe),
+        tension: 0.3,
+        fill: false
+    }));
+
+    if (chartInstances[`line_sexe_taille_${profil}`]) {
+        chartInstances[`line_sexe_taille_${profil}`].destroy();
+    }
+
+    chartInstances[`line_sexe_taille_${profil}`] = new Chart(ctx, {
+        type: 'line',
+        data: {
+            labels: tailles,
+            datasets: datasets
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            animation: {
+                duration: 800,
+                easing: 'easeOutCubic'
+            },
+            scales: {
+                y: { beginAtZero: true, max: 10 }
+            }
+        }
+    });
+}
+
 // Table : Top artistes
 function fillTopArtistes(tableId,data,profil){
 
@@ -1104,6 +1238,18 @@ function createGraphsForProfile(profil, data) {
     if (ctxBarGeneration) {
         console.log("Création graphique Moyenne Generation");
         graphMoyenneParGeneration(ctxBarGeneration.getContext('2d'), data, profil);
+    }
+
+    const ctxLineSexeAnnee = document.getElementById(`graph_moyenne_sexe_annee_${profil}`);
+    if (ctxLineSexeAnnee) {
+        console.log("Création graphique Moyenne Sexe par années");
+        graphMoyenneParSexeEtAnnee(ctxLineSexeAnnee.getContext('2d'), data, profil);
+    }
+
+    const ctxLineSexeTaille = document.getElementById(`graph_moyenne_sexe_taille_${profil}`);
+    if (ctxLineSexeTaille) {
+        console.log("Création graphique Moyenne Sexe par taille");
+        graphMoyenneParSexeEtTaille(ctxLineSexeTaille.getContext('2d'), data, profil);
     }
 
     // Ajouter la suite de X ici pour les autres graphes...
