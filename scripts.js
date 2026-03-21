@@ -776,8 +776,10 @@ const heatmapLabelsPlugin = {
             const x = xScale.getPixelForTick(i);
             const year = tick.label;
 
+            const value = sums[year] ?? 0;
+            
             ctx.fillText(
-                sums[year],
+                value,
                 x,
                 chart.chartArea.top - 5
             );
