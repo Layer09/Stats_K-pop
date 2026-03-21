@@ -742,6 +742,9 @@ function graphMoyenneParSexeEtTaille(ctx, data, profil) {
         }
     });
 }
+
+
+
 // ================= PLUGIN =================
 const heatmapLabelsPlugin = {
     id: 'heatmapLabels',
@@ -756,23 +759,26 @@ const heatmapLabelsPlugin = {
 
         ctx.save();
 
-        // 🔤 STYLE TEXTE
         ctx.font = "bold 11px Arial";
         ctx.textAlign = "center";
         ctx.textBaseline = "middle";
 
-        // 🔢 VALEURS DANS LES CASES
+        // 🔢 VALEURS CENTRÉES
         meta.data.forEach((rect, i) => {
             const value = dataset.data[i].v;
-
             if (!rect || value === 0) return;
 
             ctx.fillStyle = value > chart._maxValue * 0.5 ? "white" : "black";
-            ctx.fillText(value, rect.x, rect.y);
+
+            ctx.fillText(
+                value,
+                rect.x,
+                rect.y
+            );
         });
 
-        // 🔝 SOMMES DES COLONNES
-        ctx.textBaseline = "bottom";
+        // 🔽 SOMMES EN BAS
+        ctx.textBaseline = "top";
         ctx.fillStyle = "black";
 
         xScale.ticks.forEach((tick, i) => {
@@ -781,7 +787,11 @@ const heatmapLabelsPlugin = {
 
             const value = sums[year] ?? 0;
 
-            ctx.fillText(value, x, chart.chartArea.top - 5);
+            ctx.fillText(
+                value,
+                x,
+                chart.chartArea.bottom + 5
+            );
         });
 
         ctx.restore();
@@ -790,7 +800,7 @@ const heatmapLabelsPlugin = {
 
 
 
-// ================= COULEUR (DÉGRADÉ RICHE) =================
+// ================= COULEUR =================
 function getGradientColor(value, max) {
     if (value === 0) return "#00008B";
 
@@ -799,8 +809,8 @@ function getGradientColor(value, max) {
     const colors = [
         [0, 0, 139],
         [0, 0, 255],
-        [0, 100, 255],
-        [0, 180, 255],
+        [0, 120, 255],
+        [0, 200, 255],
         [0, 255, 255],
         [0, 220, 180],
         [0, 180, 100],
@@ -907,18 +917,28 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
                 data: dataset,
                 backgroundColor: ctx => getGradientColor(ctx.raw.v, maxValue),
 
-                // 🔥 REMPLISSAGE MAX (plus de trous horizontaux)
+                // 🔲 CASES CARRÉES
                 width: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
 
-                    return (area.width / annees.length) - 1;
+                    const size = Math.min(
+                        area.width / annees.length,
+                        area.height / maxEpisode
+                    );
+
+                    return size;
                 },
                 height: ({chart}) => {
                     const area = chart.chartArea;
                     if (!area) return 10;
 
-                    return (area.height / maxEpisode) - 1;
+                    const size = Math.min(
+                        area.width / annees.length,
+                        area.height / maxEpisode
+                    );
+
+                    return size;
                 }
             }]
         },
@@ -928,7 +948,8 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
 
             layout: {
                 padding: {
-                    top: 40
+                    top: 40,
+                    bottom: 40
                 }
             },
 
@@ -942,10 +963,12 @@ function graphHeatmapEpisodesAnnees(ctx, data) {
             scales: {
                 x: {
                     type: 'category',
+                    position: 'top', // 🔝 années en haut
                     labels: annees
                 },
                 y: {
                     type: 'category',
+                    reverse: true, // 🔥 épisode 1 en haut
                     labels: Array.from({length: maxEpisode}, (_, i) => i + 1),
                     ticks: {
                         callback: v => `Ep${v}`
