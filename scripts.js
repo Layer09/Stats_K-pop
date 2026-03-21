@@ -743,6 +743,168 @@ function graphMoyenneParSexeEtTaille(ctx, data, profil) {
     });
 }
 
+function graphHeatmapEpisodesAnnees(ctx, data) {
+
+    // -----------------------------
+    // 1. Récupération min/max
+    // -----------------------------
+    const episodes = [...new Set(data.map(d => +d.Episode))];
+    const anneesData = data.map(d => +d.Annee);
+
+    const minYear = Math.min(...anneesData);
+    const maxYear = Math.max(...anneesData);
+
+    // Toutes les années même vides
+    const annees = [];
+    for (let y = minYear; y <= maxYear; y++) {
+        annees.push(y);
+    }
+
+    const maxEpisode = Math.max(...episodes);
+
+    // -----------------------------
+    // 2. Initialisation matrice
+    // -----------------------------
+    const matrix = {};
+
+    for (let ep = 1; ep <= maxEpisode; ep++) {
+        matrix[ep] = {};
+        annees.forEach(a => matrix[ep][a] = 0);
+    }
+
+    // -----------------------------
+    // 3. Remplissage
+    // -----------------------------
+    data.forEach(d => {
+        const ep = +d.Episode;
+        const an = +d.Annee;
+
+        if (!isNaN(ep) && !isNaN(an)) {
+            matrix[ep][an]++;
+        }
+    });
+
+    // -----------------------------
+    // 4. Sommes colonnes
+    // -----------------------------
+    const columnSums = {};
+    annees.forEach(a => {
+        columnSums[a] = 0;
+        for (let ep = 1; ep <= maxEpisode; ep++) {
+            columnSums[a] += matrix[ep][a];
+        }
+    });
+
+    // -----------------------------
+    // 5. Max valeur (pour couleurs)
+    // -----------------------------
+    let maxValue = 0;
+    for (let ep = 1; ep <= maxEpisode; ep++) {
+        for (let a of annees) {
+            if (matrix[ep][a] > maxValue) {
+                maxValue = matrix[ep][a];
+            }
+        }
+    }
+
+    // -----------------------------
+    // 6. Fonction couleur (gradient)
+    // -----------------------------
+    function getColor(value) {
+        if (value === 0) return "#00008B"; // bleu foncé
+
+        const ratio = value / maxValue;
+
+        if (ratio < 0.2) return "#0000FF";     // bleu
+        if (ratio < 0.4) return "#00CED1";     // cyan
+        if (ratio < 0.6) return "#32CD32";     // vert
+        if (ratio < 0.75) return "#FFD700";    // jaune
+        if (ratio < 0.9) return "#FF8C00";     // orange
+        return "#8B0000";                      // rouge foncé
+    }
+
+    // -----------------------------
+    // 7. Format dataset
+    // -----------------------------
+    const dataset = [];
+
+    for (let ep = 1; ep <= maxEpisode; ep++) {
+        for (let a of annees) {
+            dataset.push({
+                x: a,
+                y: ep,
+                v: matrix[ep][a]
+            });
+        }
+    }
+
+    // -----------------------------
+    // 8. Destroy ancien chart
+    // -----------------------------
+    if (chartInstances["heatmap"]) {
+        chartInstances["heatmap"].destroy();
+    }
+
+    // -----------------------------
+    // 9. Création chart
+    // -----------------------------
+    chartInstances["heatmap"] = new Chart(ctx, {
+        type: 'matrix',
+        data: {
+            datasets: [{
+                label: 'Heatmap',
+                data: dataset,
+                backgroundColor: ctx => getColor(ctx.raw.v),
+                width: ({chart}) => (chart.chartArea || {}).width / annees.length - 1,
+                height: ({chart}) => (chart.chartArea || {}).height / maxEpisode - 1
+            }]
+        },
+        options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { display: false },
+
+                tooltip: {
+                    callbacks: {
+                        title: () => '',
+                        label: ctx =>
+                            `Ep ${ctx.raw.y} / ${ctx.raw.x} : ${ctx.raw.v}`
+                    }
+                }
+            },
+
+            scales: {
+                x: {
+                    type: 'category',
+                    labels: annees,
+                    ticks: {
+                        callback: function(value) {
+                            const year = this.getLabelForValue(value);
+                            return `${year}\n(${columnSums[year]})`;
+                        }
+                    },
+                    title: {
+                        display: true,
+                        text: 'Années'
+                    }
+                },
+                y: {
+                    type: 'linear',
+                    ticks: {
+                        stepSize: 1,
+                        callback: v => `Ep${v}`
+                    },
+                    title: {
+                        display: true,
+                        text: 'Épisodes'
+                    }
+                }
+            }
+        }
+    });
+}
+
 // Table : Top artistes
 function fillTopArtistes(tableId,data,profil){
 
@@ -1250,6 +1412,12 @@ function createGraphsForProfile(profil, data) {
     if (ctxLineSexeTaille) {
         console.log("Création graphique Moyenne Sexe par taille");
         graphMoyenneParSexeEtTaille(ctxLineSexeTaille.getContext('2d'), data, profil);
+    }
+
+    const ctxHeatmap = document.getElementById("heatmap_episodes_annees").getContext("2d");
+    if (ctxHeatmap) {
+        console.log("Création de la heatmap");
+        graphHeatmapEpisodesAnnees(ctxHeatmap, data);
     }
 
     // Ajouter la suite de X ici pour les autres graphes...
